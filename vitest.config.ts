@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
   test: {
+    restoreMocks: true,
     projects: [
       {
         extends: true,
@@ -17,6 +18,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          restoreMocks: true,
           name: "ui",
           include: ["src/**/*.test.{ts,tsx}"],
           exclude: ["src/server/**"],

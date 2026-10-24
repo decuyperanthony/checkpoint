@@ -3,6 +3,10 @@ import type { ComponentProps } from "react";
 
 import { Button as PrimitiveButton } from "@/shared/ui/primitives/button";
 
+const variants = { ghost: "ghost", destructive: "destructive" } as const satisfies {
+  [variant: string]: ComponentProps<typeof PrimitiveButton>["variant"];
+};
+
 const sizes = {
   sm: "icon-sm",
   md: "icon",
@@ -13,7 +17,7 @@ type IconButtonProps = Omit<ComponentProps<"button">, "className" | "style" | "c
   readonly icon: LucideIcon;
   // Icon-only: the label is what assistive technologies announce.
   readonly label: string;
-  readonly variant?: "ghost" | "destructive";
+  readonly variant?: keyof typeof variants;
   readonly size?: keyof typeof sizes;
 };
 
@@ -25,7 +29,14 @@ export const IconButton = ({
   type = "button",
   ...props
 }: IconButtonProps) => (
-  <PrimitiveButton {...props} type={type} variant={variant} size={sizes[size]} aria-label={label} title={label}>
+  <PrimitiveButton
+    {...props}
+    type={type}
+    variant={variants[variant]}
+    size={sizes[size]}
+    aria-label={label}
+    title={label}
+  >
     <Icon aria-hidden />
   </PrimitiveButton>
 );

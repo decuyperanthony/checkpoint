@@ -3,21 +3,11 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
 
-// The one place notifications are rendered. Styled with tokens, following the active theme.
+// The one place notifications are rendered, following the active theme (colours: globals.css).
 export const Toaster = () => {
   const { resolvedTheme } = useTheme();
 
-  return (
-    <Sonner
-      theme={resolvedTheme === "dark" ? "dark" : "light"}
-      toastOptions={{
-        classNames: {
-          toast: "border-border bg-popover text-popover-foreground",
-          error: "text-error",
-        },
-      }}
-    />
-  );
+  return <Sonner theme={resolvedTheme === "dark" ? "dark" : "light"} />;
 };
 
 export { toast } from "sonner";

@@ -13,7 +13,8 @@ export type ApiError = ContractError | UnexpectedApiError;
 
 const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
-const client = HttpApiClient.make(Api, { baseUrl: globalThis.location?.origin });
+// Relative URLs, resolved against the page: the client only runs in the browser.
+const client = HttpApiClient.make(Api);
 
 type ApiClient = Effect.Success<typeof client>;
 
@@ -25,8 +26,15 @@ export const toApiError = (error: unknown): ApiError =>
 
 // The bridge between Effect and the Promise-based world of TanStack Query: resolves with the
 // endpoint's success value, rejects with an `ApiError`.
-export const callApi = async <A, E>(request: (api: ApiClient) => Effect.Effect<A, E>): Promise<A> => {
-  const exit = await runtime.runPromiseExit(client.pipe(Effect.flatMap(request), Effect.mapError(toApiError)));
+// `signal` comes from TanStack Query, so unmounted or cancelled queries abort their request.
+export const callApi = async <A, E>(
+  request: (api: ApiClient) => Effect.Effect<A, E>,
+  options?: { readonly signal?: AbortSignal },
+): Promise<A> => {
+  const exit = await runtime.runPromiseExit(client.pipe(Effect.flatMap(request)), options);
   if (Exit.isSuccess(exit)) return exit.value;
-  throw Option.getOrElse(Cause.findErrorOption(exit.cause), () => new UnexpectedApiError({ cause: exit.cause }));
+  const error = toApiError(Option.getOrElse(Cause.findErrorOption(exit.cause), () => exit.cause));
+  // Unexpected failures only reach the user as a generic message: keep the details for debugging.
+  if (error instanceof UnexpectedApiError) console.error(Cause.pretty(exit.cause));
+  throw error;
 };
