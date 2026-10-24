@@ -1,15 +1,15 @@
 import { ConfigProvider, Effect, Redacted } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { loadAppConfig } from "./Config";
+import { AppConfig } from "./Config";
 
 type TestEnv = { readonly DATABASE_URL?: string };
 
 const withEnv = (env: TestEnv) => Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnv({ env })));
 
-const configError = (env: TestEnv) => Effect.runPromise(loadAppConfig.pipe(Effect.flip, withEnv(env)));
+const configError = (env: TestEnv) => Effect.runPromise(AppConfig.make.pipe(Effect.flip, withEnv(env)));
 
-describe("loadAppConfig", () => {
+describe("AppConfig", () => {
   it("names the variable when it is missing", async () => {
     const error = await configError({});
 
@@ -33,7 +33,7 @@ describe("loadAppConfig", () => {
 
   it("keeps the database url redacted", async () => {
     const url = "postgresql://user:secret@host/db";
-    const config = await Effect.runPromise(loadAppConfig.pipe(withEnv({ DATABASE_URL: url })));
+    const config = await Effect.runPromise(AppConfig.make.pipe(withEnv({ DATABASE_URL: url })));
 
     expect(String(config.databaseUrl)).not.toContain("secret");
     expect(Redacted.value(config.databaseUrl)).toBe(url);
