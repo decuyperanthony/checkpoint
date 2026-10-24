@@ -35,8 +35,8 @@ export const SectionRepositoryDrizzle = Layer.effect(
           Effect.flatMap(decodeRows(Section)),
           Effect.flatMap(firstRow),
         ),
-      updateTitle: ({ id, title }) =>
-        query((db) => db.update(section).set({ title }).where(eq(section.id, id)).returning(columns)).pipe(
+      update: ({ id, changes }) =>
+        query((db) => db.update(section).set(changes).where(eq(section.id, id)).returning(columns)).pipe(
           Effect.flatMap(decodeRows(Section)),
           Effect.map(Array.head),
         ),

@@ -2,7 +2,7 @@ import { Context, Effect, Layer, Option } from "effect";
 
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import type { Section, SectionId } from "@/contract/schemas/Section";
-import { SectionRepository, type SectionRename } from "@/server/repositories/SectionRepository";
+import { SectionRepository } from "@/server/repositories/SectionRepository";
 
 const notFound = (id: SectionId) => Effect.fromOption(() => new SectionNotFound({ id }));
 
@@ -19,7 +19,8 @@ const make = Effect.gen(function* () {
         Effect.flatMap((position) => repository.insert({ title, position })),
       ),
 
-    rename: ({ id, title }: SectionRename) => repository.updateTitle({ id, title }).pipe(Effect.flatMap(notFound(id))),
+    rename: ({ id, title }: Pick<Section, "id" | "title">) =>
+      repository.update({ id, changes: { title } }).pipe(Effect.flatMap(notFound(id))),
 
     remove: (id: SectionId) => repository.delete(id).pipe(Effect.flatMap(notFound(id)), Effect.asVoid),
   };

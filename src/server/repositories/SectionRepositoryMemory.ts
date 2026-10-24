@@ -31,9 +31,9 @@ export const SectionRepositoryMemory = Layer.effect(
           yield* Ref.update(sections, Array.append(created));
           return created;
         }),
-      updateTitle: ({ id, title }) =>
+      update: ({ id, changes }) =>
         Ref.modify(sections, (all) => {
-          const updated = Array.findFirst(all, (s) => s.id === id).pipe(Option.map((s) => ({ ...s, title })));
+          const updated = Array.findFirst(all, (s) => s.id === id).pipe(Option.map((s) => ({ ...s, ...changes })));
           const next = Option.match(updated, {
             onNone: () => all,
             onSome: (section) => all.map((s) => (s.id === id ? section : s)),
