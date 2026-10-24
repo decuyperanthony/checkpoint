@@ -1,4 +1,4 @@
-import { Array, Data, Effect, Schema } from "effect";
+import { Array, Data, Effect, Option, Schema } from "effect";
 
 import type { Db } from "./Db";
 
@@ -20,3 +20,17 @@ export const decodeRows =
     Schema.decodeUnknownEffect(Schema.Array(schema))(rows).pipe(Effect.orDie);
 
 export const firstRow = <A>(rows: ReadonlyArray<A>) => Effect.fromOption(Array.head(rows)).pipe(Effect.orDie);
+
+// For UPDATE … RETURNING: the updated row, or none when nothing matched.
+export const updatedRow =
+  <S extends Schema.Top>(schema: S) =>
+  (rows: ReadonlyArray<unknown>) =>
+    decodeRows(schema)(rows).pipe(Effect.map(Array.head));
+
+// For DELETE … RETURNING id: the deleted id, or none when nothing matched.
+export const deletedId =
+  <A>(idSchema: Schema.Codec<A, string>) =>
+  (rows: ReadonlyArray<unknown>) =>
+    decodeRows(Schema.Struct({ id: idSchema }))(rows).pipe(
+      Effect.map((decoded) => Array.head(decoded).pipe(Option.map((row) => row.id))),
+    );

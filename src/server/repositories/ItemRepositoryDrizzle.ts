@@ -1,10 +1,10 @@
 import { asc, eq, max } from "drizzle-orm";
-import { Array, Effect, Layer, Option, Schema } from "effect";
+import { Effect, Layer, Option } from "effect";
 
 import { Item, ItemId } from "@/contract/schemas/Item";
 import { Db } from "@/server/infra/Db";
 import { item } from "@/server/infra/db/schema";
-import { decodeRows, firstRow, makeQuery } from "@/server/infra/query";
+import { decodeRows, deletedId, firstRow, makeQuery, updatedRow } from "@/server/infra/query";
 
 import { ItemRepository } from "./ItemRepository";
 
@@ -39,13 +39,11 @@ export const ItemRepositoryDrizzle = Layer.effect(
         ),
       update: ({ id, changes }) =>
         query((db) => db.update(item).set(changes).where(eq(item.id, id)).returning(columns)).pipe(
-          Effect.flatMap(decodeRows(Item)),
-          Effect.map(Array.head),
+          Effect.flatMap(updatedRow(Item)),
         ),
       delete: (id) =>
         query((db) => db.delete(item).where(eq(item.id, id)).returning({ id: item.id })).pipe(
-          Effect.flatMap(decodeRows(Schema.Struct({ id: ItemId }))),
-          Effect.map((rows) => Array.head(rows).pipe(Option.map((row) => row.id))),
+          Effect.flatMap(deletedId(ItemId)),
         ),
     });
   }),

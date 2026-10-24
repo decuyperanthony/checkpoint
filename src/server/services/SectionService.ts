@@ -1,8 +1,9 @@
-import { Context, Effect, Layer, Option } from "effect";
+import { Context, Effect, Layer } from "effect";
 
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import type { Section, SectionId } from "@/contract/schemas/Section";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
+import { nextPosition } from "@/server/services/positions";
 
 const notFound = (id: SectionId) => Effect.fromOption(() => new SectionNotFound({ id }));
 
@@ -17,8 +18,7 @@ export class SectionService extends Context.Service<SectionService>()("checkpoin
 
       // New sections go last.
       create: Effect.fn("SectionService.create")(function* (title: Section["title"]) {
-        const last = yield* repository.lastPosition;
-        const position = Option.match(last, { onNone: () => 0, onSome: (value) => value + 1 });
+        const position = nextPosition(yield* repository.lastPosition);
         return yield* repository.insert({ title, position });
       }),
 
