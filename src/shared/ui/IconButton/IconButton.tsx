@@ -13,14 +13,14 @@ const sizes = {
   sm: "icon-sm",
   md: "icon",
   lg: "icon-lg",
-} as const satisfies { readonly [K in Exclude<Size, "xl">]: ComponentProps<typeof PrimitiveButton>["size"] };
+} as const satisfies { [K in Exclude<Size, "xl">]: ComponentProps<typeof PrimitiveButton>["size"] };
 
 type IconButtonProps = Omit<ComponentProps<"button">, "className" | "style" | "children" | "aria-label"> & {
-  readonly icon: LucideIcon;
+  icon: LucideIcon;
   // Icon-only: the label is what assistive technologies announce.
-  readonly label: string;
-  readonly variant?: keyof typeof variants;
-  readonly size?: keyof typeof sizes;
+  label: string;
+  variant?: keyof typeof variants;
+  size?: keyof typeof sizes;
 };
 
 export const IconButton = ({

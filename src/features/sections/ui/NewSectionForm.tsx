@@ -2,21 +2,36 @@
 
 import { useTranslations } from "next-intl";
 
+import { SectionTitlePayload } from "@/contract/schemas/Section";
 import { useCreateSection } from "@/features/sections/api/sections";
-import { useTitleField } from "@/features/sections/model/titleField";
-import { AddForm } from "@/shared/ui/AddForm";
+import { createForm } from "@/shared/form";
+import { Button } from "@/shared/ui/Button";
+import { Stack } from "@/shared/ui/Stack";
+
+const SectionForm = createForm(SectionTitlePayload);
 
 export const NewSectionForm = () => {
-  const t = useTranslations("sections");
-  const field = useTitleField();
+  const t = useTranslations();
   const create = useCreateSection();
+  const form = SectionForm.useForm({ defaultValues: { title: "" } });
+
+  // Sections are added one after the other: the field empties and keeps the focus.
+  const add = ({ title }: SectionTitlePayload) =>
+    create.mutate(title, {
+      onSuccess: () => {
+        form.reset();
+        form.setFocus("title");
+      },
+    });
 
   return (
-    <AddForm
-      label={t("newTitle")}
-      field={field}
-      pending={create.isPending}
-      onAdd={(title, options) => create.mutate(title, options)}
-    />
+    <SectionForm form={form} onSubmit={add}>
+      <Stack direction="row">
+        <SectionForm.TextField name="title" label={t("sections.newTitle")} labelVisibility="hidden" />
+        <Button type="submit" disabled={create.isPending}>
+          {t("actions.add")}
+        </Button>
+      </Stack>
+    </SectionForm>
   );
 };

@@ -10,7 +10,7 @@ import { toast } from "@/shared/ui/Toaster";
 const showError = (error: unknown) => toast.error(<ErrorMessage error={error} />);
 
 type QueryProviderProps = {
-  readonly children: ReactNode;
+  children: ReactNode;
 };
 
 export const QueryProvider = ({ children }: QueryProviderProps) => {

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ComponentProps } from "react";
+import { useRef, type ComponentProps } from "react";
 
 import { Field, useField, type FieldProps } from "@/shared/ui/Field";
 import { Input } from "@/shared/ui/primitives/input";
@@ -18,14 +18,33 @@ type TextFieldProps = Omit<
   "className" | "style" | "size" | "id" | "aria-invalid" | "aria-describedby"
 > &
   FieldProps &
-  VariantProps<typeof input>;
+  VariantProps<typeof input> & {
+    // Takes the focus once, when it appears: for a value the user just asked to edit.
+    focusOnMount?: boolean;
+  };
 
-export const TextField = ({ label, labelVisibility, error, size, ...props }: TextFieldProps) => {
+export const TextField = ({
+  label,
+  labelVisibility,
+  error,
+  size,
+  focusOnMount = false,
+  ref,
+  ...props
+}: TextFieldProps) => {
   const { field, control } = useField(error);
+  const focused = useRef(false);
+  const inputRef = (element: HTMLInputElement | null) => {
+    if (typeof ref === "function") ref(element);
+    else if (ref) ref.current = element;
+    if (element === null || !focusOnMount || focused.current) return;
+    focused.current = true;
+    element.focus();
+  };
 
   return (
     <Field {...field} label={label} labelVisibility={labelVisibility} error={error}>
-      <Input {...props} {...control} className={input({ size })} />
+      <Input {...props} {...control} ref={inputRef} className={input({ size })} />
     </Field>
   );
 };

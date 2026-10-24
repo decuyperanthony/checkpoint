@@ -5,7 +5,7 @@ import { SectionId } from "@/contract/schemas/Section";
 export const ItemId = Schema.String.check(Schema.isUUID()).pipe(Schema.brand("ItemId"));
 export type ItemId = typeof ItemId.Type;
 
-export const itemContentMaxLength = 500;
+const itemContentMaxLength = 500;
 
 export const ItemContent = Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(itemContentMaxLength));
 
@@ -19,6 +19,7 @@ export const Item = Schema.Struct({
 export type Item = typeof Item.Type;
 
 export const CreateItemPayload = Schema.Struct({ content: ItemContent });
+export type CreateItemPayload = typeof CreateItemPayload.Type;
 
 // Partial update: edit the text, check or uncheck, or both. The union rules out `{}`, in the
 // type as well as at runtime.

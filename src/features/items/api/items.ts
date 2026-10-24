@@ -8,7 +8,7 @@ import { useInvalidate } from "@/shared/lib/useInvalidate";
 
 const itemsQuery = {
   queryKey: queryKeys.items,
-  queryFn: ({ signal }: { readonly signal: AbortSignal }) => callApi((api) => api.items.list(), { signal }),
+  queryFn: ({ signal }: { signal: AbortSignal }) => callApi((api) => api.items.list(), { signal }),
 };
 
 // One list for the whole board: each section filters it, so the board loads in two requests.
@@ -21,7 +21,7 @@ export const usePrefetchItems = () => usePrefetchQuery(itemsQuery);
 export const useCreateItem = () => {
   const invalidate = useInvalidate(queryKeys.items);
   return useMutation({
-    mutationFn: ({ sectionId, content }: { readonly sectionId: SectionId; readonly content: Item["content"] }) =>
+    mutationFn: ({ sectionId, content }: { sectionId: SectionId; content: Item["content"] }) =>
       callApi((api) => api.items.create({ params: { id: sectionId }, payload: { content } })),
     onSuccess: invalidate,
   });
@@ -30,7 +30,7 @@ export const useCreateItem = () => {
 export const useUpdateItem = () => {
   const invalidate = useInvalidate(queryKeys.items);
   return useMutation({
-    mutationFn: ({ id, changes }: { readonly id: Item["id"]; readonly changes: UpdateItemPayload }) =>
+    mutationFn: ({ id, changes }: { id: Item["id"]; changes: UpdateItemPayload }) =>
       callApi((api) => api.items.update({ params: { id }, payload: changes })),
     onSuccess: invalidate,
   });

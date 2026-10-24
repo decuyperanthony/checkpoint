@@ -6,39 +6,28 @@ import { useTranslations } from "next-intl";
 import type { Item } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
 import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
-import { useContentField } from "@/features/items/model/contentField";
+import { EditItemForm } from "@/features/items/ui/EditItemForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Checkbox } from "@/shared/ui/Checkbox";
-import { EditForm } from "@/shared/ui/EditForm";
 import { IconButton } from "@/shared/ui/IconButton";
 import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
 
 type ItemRowProps = {
-  readonly item: Item;
+  item: Item;
   // Its section's title, so that rows with the same text in two sections have distinct names.
-  readonly sectionTitle: Section["title"];
+  sectionTitle: Section["title"];
 };
 
 export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
   const names = { content: item.content, section: sectionTitle };
   const t = useTranslations("items");
   const { editing, triggerRef, open, close } = useInlineEdit();
-  const field = useContentField();
   const update = useUpdateItem();
   const remove = useRemoveItem();
 
   if (editing) {
-    return (
-      <EditForm
-        label={t("content", names)}
-        field={field}
-        value={item.content}
-        pending={update.isPending}
-        onSave={(content) => update.mutate({ id: item.id, changes: { content } }, { onSuccess: close })}
-        onCancel={close}
-      />
-    );
+    return <EditItemForm item={item} sectionTitle={sectionTitle} onClose={close} />;
   }
 
   return (

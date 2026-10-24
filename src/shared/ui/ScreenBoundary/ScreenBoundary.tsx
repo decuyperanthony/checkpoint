@@ -32,7 +32,7 @@ export const ScreenLoading = () => {
 };
 
 type ScreenBoundaryProps = {
-  readonly children: ReactNode;
+  children: ReactNode;
 };
 
 // Loading and failure states for a whole screen, so components below never handle

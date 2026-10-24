@@ -19,7 +19,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 type RootLayoutProps = {
-  readonly children: ReactNode;
+  children: ReactNode;
 };
 
 const RootLayout = async ({ children }: RootLayoutProps) => {

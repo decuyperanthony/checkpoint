@@ -17,6 +17,13 @@
     "remove": "Supprimer",
     "removeTitle": "Supprimer « {name} » ?"
   },
+  "form": {
+    "errors": {
+      "isMinLength": "{minLength, plural, =1 {Ce champ est obligatoire.} other {Ce champ doit contenir au moins # caractères.}}",
+      "isMaxLength": "Ce champ ne peut pas dépasser {maxLength} caractères.",
+      "invalid": "Cette valeur n'est pas valide."
+    }
+  },
   "errors": {
     "sectionNotFound": "Cette section n'existe plus.",
     "itemNotFound": "Cet élément n'existe plus.",
@@ -28,13 +35,11 @@
     "title": "Titre de la section {title}",
     "rename": "Renommer la section {title}",
     "remove": "Supprimer la section {title}",
-    "titleInvalid": "Le titre doit faire entre 1 et {max} caractères.",
     "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
   },
   "items": {
     "newContent": "Nouvel élément dans {section}",
     "content": "Texte de l'élément {content} dans {section}",
-    "contentInvalid": "Le texte doit faire entre 1 et {max} caractères.",
     "edit": "Modifier l'élément {content} dans {section}",
     "remove": "Supprimer l'élément {content} dans {section}",
     "removeDescription": "L'élément sera supprimé définitivement."

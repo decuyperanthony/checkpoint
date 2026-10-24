@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import messages from "@/shared/i18n/messages/fr.json";
 
 // The app's French messages around a component, for design-system tests.
-export const TestIntl = ({ children }: { readonly children: ReactNode }) => (
+export const TestIntl = ({ children }: { children: ReactNode }) => (
   <NextIntlClientProvider locale="fr" messages={messages} timeZone="Europe/Paris">
     {children}
   </NextIntlClientProvider>

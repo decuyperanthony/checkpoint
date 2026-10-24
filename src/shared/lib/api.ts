@@ -7,7 +7,7 @@ import { ContractError } from "@/contract/errors/ContractError";
 
 // Network failures, unexpected statuses and undecodable responses: nothing the user can act
 // on beyond retrying, so they share one error.
-export class UnexpectedApiError extends Data.TaggedError("UnexpectedApiError")<{ readonly cause: unknown }> {}
+export class UnexpectedApiError extends Data.TaggedError("UnexpectedApiError")<{ cause: unknown }> {}
 
 export type ApiError = ContractError | UnexpectedApiError;
 
@@ -29,7 +29,7 @@ export const toApiError = (error: unknown): ApiError =>
 // `signal` comes from TanStack Query, so unmounted or cancelled queries abort their request.
 export const callApi = async <A, E>(
   request: (api: ApiClient) => Effect.Effect<A, E>,
-  options?: { readonly signal?: AbortSignal },
+  options?: { signal?: AbortSignal },
 ): Promise<A> => {
   const exit = await runtime.runPromiseExit(client.pipe(Effect.flatMap(request)), options);
   if (Exit.isSuccess(exit)) return exit.value;
