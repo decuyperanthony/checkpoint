@@ -1,16 +1,13 @@
-import { Effect, Layer, Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import { SectionId } from "@/contract/schemas/Section";
-import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
+import { runServices as run, unknownUuid } from "@/server/testing/fixtures";
 
 import { SectionService } from "./SectionService";
 
-const run = <A, E>(program: Effect.Effect<A, E, SectionService>) =>
-  Effect.runPromise(program.pipe(Effect.provide(SectionService.layer.pipe(Layer.provide(RepositoriesMemory)))));
-
-const unknownId = Schema.decodeSync(SectionId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
+const unknownId = Schema.decodeSync(SectionId)(unknownUuid);
 
 describe("SectionService", () => {
   it("appends new sections after the existing ones", async () => {

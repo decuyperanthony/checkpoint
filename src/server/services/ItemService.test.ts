@@ -1,21 +1,14 @@
-import { Effect, Layer, Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
 import { ItemNotFound } from "@/contract/errors/ItemNotFound";
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import { ItemId } from "@/contract/schemas/Item";
 import { SectionId } from "@/contract/schemas/Section";
-import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
+import { runServices as run, unknownUuid } from "@/server/testing/fixtures";
 
-import { ItemService, ItemServiceLive } from "./ItemService";
+import { ItemService } from "./ItemService";
 import { SectionService } from "./SectionService";
-
-const run = <A, E>(program: Effect.Effect<A, E, ItemService | SectionService>) =>
-  Effect.runPromise(
-    program.pipe(
-      Effect.provide(Layer.mergeAll(ItemServiceLive, SectionService.layer).pipe(Layer.provide(RepositoriesMemory))),
-    ),
-  );
 
 // A section with two items, "Lait" then "Pain".
 const groceries = Effect.gen(function* () {
@@ -43,7 +36,7 @@ describe("ItemService", () => {
   });
 
   it("refuses an item in an unknown section", async () => {
-    const unknown = Schema.decodeSync(SectionId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
+    const unknown = Schema.decodeSync(SectionId)(unknownUuid);
 
     const error = await run(
       ItemService.use((items) => Effect.flip(items.create({ sectionId: unknown, content: "Lait" }))),
@@ -91,7 +84,7 @@ describe("ItemService", () => {
   });
 
   it("fails with ItemNotFound for an unknown item", async () => {
-    const unknown = Schema.decodeSync(ItemId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
+    const unknown = Schema.decodeSync(ItemId)(unknownUuid);
 
     const errors = await run(
       ItemService.use((items) =>

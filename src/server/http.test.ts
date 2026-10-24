@@ -11,6 +11,7 @@ import { MemoryStoreLive } from "@/server/repositories/MemoryStore";
 import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
+import { unknownUuid } from "@/server/testing/fixtures";
 
 const makeApp = (repositories: Layer.Layer<SectionRepository | ItemRepository>) =>
   HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide(repositories)), { disableLogger: true });
@@ -33,8 +34,6 @@ const send = (method: string, path: string, body?: unknown) =>
 const readJson = async <A, I>(response: Response, schema: Schema.Codec<A, I>) =>
   Schema.decodeUnknownSync(schema)(await response.json());
 
-const unknownId = "6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a";
-
 describe("sections API", () => {
   it("creates a section with a trimmed title", async () => {
     const response = await send("POST", "/sections", { title: "  Courses  " });
@@ -50,10 +49,10 @@ describe("sections API", () => {
   });
 
   it("answers 404 with the typed error for an unknown section", async () => {
-    const response = await send("PATCH", `/sections/${unknownId}`, { title: "Travail" });
+    const response = await send("PATCH", `/sections/${unknownUuid}`, { title: "Travail" });
 
     expect(response.status).toBe(404);
-    expect(await response.text()).toBe(JSON.stringify({ _tag: "SectionNotFound", id: unknownId }));
+    expect(await response.text()).toBe(JSON.stringify({ _tag: "SectionNotFound", id: unknownUuid }));
   });
 
   it("rejects an id that is not a uuid", async () => {
@@ -73,22 +72,6 @@ describe("sections API", () => {
     expect(list.map((section) => section.title)).toEqual(["Travail"]);
   });
 
-  it("creates an item in a section, then checks it", async () => {
-    const section = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
-    const created = await readJson(await send("POST", `/sections/${section.id}/items`, { content: " Lait " }), Item);
-
-    const response = await send("PATCH", `/items/${created.id}`, { done: true });
-
-    expect(response.status).toBe(200);
-    expect(await readJson(response, Item)).toMatchObject({ content: "Lait", done: true, sectionId: section.id });
-  });
-
-  it("rejects an item update that changes nothing", async () => {
-    const response = await send("PATCH", `/items/${unknownId}`, {});
-
-    expect(response.status).toBe(400);
-  });
-
   it("answers a database failure with an empty 500, without leaking the cause", async () => {
     await app.dispose();
     const failingDatabase = Layer.effect(
@@ -104,5 +87,36 @@ describe("sections API", () => {
 
     expect(response.status).toBe(500);
     expect(await response.text()).toBe("");
+  });
+});
+
+describe("items API", () => {
+  it("creates an item in a section, then checks it", async () => {
+    const section = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
+    const created = await readJson(await send("POST", `/sections/${section.id}/items`, { content: " Lait " }), Item);
+
+    const response = await send("PATCH", `/items/${created.id}`, { done: true });
+
+    expect(response.status).toBe(200);
+    expect(await readJson(response, Item)).toMatchObject({ content: "Lait", done: true, sectionId: section.id });
+  });
+
+  it("rejects an item update that changes nothing", async () => {
+    const response = await send("PATCH", `/items/${unknownUuid}`, {});
+
+    expect(response.status).toBe(400);
+  });
+
+  it("answers 404 with the typed error for an unknown item", async () => {
+    const response = await send("DELETE", `/items/${unknownUuid}`);
+
+    expect(response.status).toBe(404);
+    expect(await response.text()).toBe(JSON.stringify({ _tag: "ItemNotFound", id: unknownUuid }));
+  });
+
+  it("answers 404 when adding an item to an unknown section", async () => {
+    const response = await send("POST", `/sections/${unknownUuid}/items`, { content: "Lait" });
+
+    expect(response.status).toBe(404);
   });
 });
