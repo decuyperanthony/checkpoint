@@ -9,4 +9,4 @@ export const tones = ["info", "success", "warning", "error"] as const;
 export type Tone = (typeof tones)[number];
 
 // One class string per step of a scale, and no other step.
-export type TokenClasses<T extends string> = { readonly [K in T]: string };
+export type TokenClasses<T extends string> = { [K in T]: string };

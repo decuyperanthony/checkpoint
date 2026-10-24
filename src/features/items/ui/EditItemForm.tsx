@@ -13,9 +13,9 @@ import { Stack } from "@/shared/ui/Stack";
 const ItemForm = createForm(CreateItemPayload);
 
 type EditItemFormProps = {
-  readonly item: Item;
-  readonly sectionTitle: Section["title"];
-  readonly onClose: () => void;
+  item: Item;
+  sectionTitle: Section["title"];
+  onClose: () => void;
 };
 
 // The item text edited in place: Enter saves, Escape or Cancel leave without saving.

@@ -21,15 +21,15 @@ export const useField = (error: string | undefined) => {
 };
 
 export type FieldProps = {
-  readonly label: ReactNode;
-  readonly labelVisibility?: LabelVisibility | undefined;
-  readonly error?: string | undefined;
+  label: ReactNode;
+  labelVisibility?: LabelVisibility | undefined;
+  error?: string | undefined;
 };
 
 type FieldLayoutProps = FieldProps &
   ReturnType<typeof useField>["field"] & {
     // The control, spread with `useField`'s `control` attributes.
-    readonly children: ReactNode;
+    children: ReactNode;
   };
 
 // A label, a control and its error, stacked.

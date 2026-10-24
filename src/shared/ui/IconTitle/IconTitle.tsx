@@ -23,9 +23,9 @@ const icon = cva("shrink-0 text-muted-foreground", {
 });
 
 type IconTitleProps = VariantProps<typeof title> & {
-  readonly icon: LucideIcon;
-  readonly level?: HeadingLevel;
-  readonly children: ReactNode;
+  icon: LucideIcon;
+  level?: HeadingLevel;
+  children: ReactNode;
 };
 
 export const IconTitle = ({ icon: Icon, level = 2, size, children }: IconTitleProps) => {

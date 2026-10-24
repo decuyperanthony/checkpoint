@@ -12,7 +12,7 @@ import { Stack } from "@/shared/ui/Stack";
 const ItemForm = createForm(CreateItemPayload);
 
 type NewItemFormProps = {
-  readonly section: Pick<Section, "id" | "title">;
+  section: Pick<Section, "id" | "title">;
 };
 
 export const NewItemForm = ({ section }: NewItemFormProps) => {

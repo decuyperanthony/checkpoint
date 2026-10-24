@@ -17,13 +17,13 @@ const labelStyle = cva("", {
 });
 
 type CheckboxProps = VariantProps<typeof labelStyle> & {
-  readonly label: ReactNode;
-  readonly checked: boolean;
-  readonly onCheckedChange: (checked: boolean) => void;
-  readonly disabled?: boolean;
+  label: ReactNode;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  disabled?: boolean;
   // While a change is being saved: further changes are ignored, but unlike `disabled` the
   // checkbox keeps keyboard focus.
-  readonly pending?: boolean;
+  pending?: boolean;
 };
 
 export const Checkbox = ({

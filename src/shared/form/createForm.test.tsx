@@ -16,7 +16,7 @@ type Profile = typeof ProfileSchema.Type;
 
 const ProfileForm = createForm(ProfileSchema);
 
-const Profile = ({ name, onSubmit }: { readonly name: string; readonly onSubmit: (values: Profile) => void }) => {
+const Profile = ({ name, onSubmit }: { name: string; onSubmit: (values: Profile) => void }) => {
   const form = ProfileForm.useForm({ defaultValues: { name, nickname: "" } });
 
   return (

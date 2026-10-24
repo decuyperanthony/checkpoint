@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/shared/ui/Button";
 
 type EditActionsProps = {
-  readonly pending: boolean;
-  readonly onCancel: () => void;
+  pending: boolean;
+  onCancel: () => void;
 };
 
 // Save and Cancel, after a value edited in place. Save submits the surrounding form.

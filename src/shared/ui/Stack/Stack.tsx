@@ -13,7 +13,7 @@ const stack = cva("flex", {
 });
 
 type StackProps = VariantProps<typeof stack> & {
-  readonly children: ReactNode;
+  children: ReactNode;
 };
 
 // Layout for features, which never write their own spacing classes.

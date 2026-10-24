@@ -28,7 +28,7 @@ type TextElement = "p" | "span" | "div" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6
 // Every native attribute (`id`, `role`, `aria-*`…) except styling, which goes through the tokens.
 type TextProps = Omit<HTMLAttributes<HTMLElement>, "className" | "style"> &
   VariantProps<typeof text> & {
-    readonly as?: TextElement;
+    as?: TextElement;
   };
 
 // Text with design tokens, so features never write their own `<p>` or typography classes.

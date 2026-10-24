@@ -7,7 +7,7 @@ import { NewItemForm } from "@/features/items/ui/NewItemForm";
 import { Stack } from "@/shared/ui/Stack";
 
 type ItemListProps = {
-  readonly section: Pick<Section, "id" | "title">;
+  section: Pick<Section, "id" | "title">;
 };
 
 export const ItemList = ({ section }: ItemListProps) => {

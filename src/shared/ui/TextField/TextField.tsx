@@ -20,7 +20,7 @@ type TextFieldProps = Omit<
   FieldProps &
   VariantProps<typeof input> & {
     // Takes the focus once, when it appears: for a value the user just asked to edit.
-    readonly focusOnMount?: boolean;
+    focusOnMount?: boolean;
   };
 
 export const TextField = ({

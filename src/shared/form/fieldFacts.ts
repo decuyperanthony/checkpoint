@@ -1,9 +1,9 @@
 import { Option, Schema } from "effect";
 
 // The fields a form can hold: schemas that decode without any service.
-export type FormFields = { readonly [name: string]: Schema.ConstraintDecoder<unknown> };
+export type FormFields = { [name: string]: Schema.ConstraintDecoder<unknown> };
 
-const hasMaxLength = (payload: unknown): payload is { readonly maxLength: number } =>
+const hasMaxLength = (payload: unknown): payload is { maxLength: number } =>
   typeof payload === "object" && payload !== null && "maxLength" in payload && typeof payload.maxLength === "number";
 
 // The `Schema.isMaxLength` limit among a field's checks, if it has one.

@@ -41,9 +41,9 @@ export const createForm = <F extends FormFields>(schema: Schema.Struct<F>) => {
     useReactHookForm<Input, unknown, Output>({ ...options, resolver: useSchemaResolver(schema) });
 
   type FormProps = {
-    readonly form: UseFormReturn<Input, unknown, Output>;
-    readonly onSubmit: (values: Output) => void;
-    readonly children: ReactNode;
+    form: UseFormReturn<Input, unknown, Output>;
+    onSubmit: (values: Output) => void;
+    children: ReactNode;
   };
 
   const Form = ({ form, onSubmit, children }: FormProps) => (
@@ -57,7 +57,7 @@ export const createForm = <F extends FormFields>(schema: Schema.Struct<F>) => {
 
   type TextFieldProps = Omit<ComponentProps<typeof PlainTextField>, BoundProps> & {
     // Only the fields holding a string.
-    readonly name: FieldPathByValue<Input, string>;
+    name: FieldPathByValue<Input, string>;
   };
 
   const TextField = ({ name, ...props }: TextFieldProps) => {

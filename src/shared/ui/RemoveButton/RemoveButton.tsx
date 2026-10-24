@@ -8,11 +8,11 @@ import { IconButton } from "@/shared/ui/IconButton";
 
 type RemoveButtonProps = {
   // What is removed, as the user knows it: "Supprimer « {name} » ?".
-  readonly name: string;
-  readonly label: string;
-  readonly description: string;
-  readonly disabled?: boolean;
-  readonly onConfirm: () => void;
+  name: string;
+  label: string;
+  description: string;
+  disabled?: boolean;
+  onConfirm: () => void;
 };
 
 // The trash button of every removable thing, behind a confirmation.

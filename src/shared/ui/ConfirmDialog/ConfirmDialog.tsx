@@ -17,12 +17,12 @@ import {
 
 type ConfirmDialogProps = {
   // The element that opens the dialog, usually a button.
-  readonly trigger: ReactElement;
-  readonly title: string;
-  readonly description: string;
-  readonly confirmLabel: string;
-  readonly destructive?: boolean;
-  readonly onConfirm: () => void;
+  trigger: ReactElement;
+  title: string;
+  description: string;
+  confirmLabel: string;
+  destructive?: boolean;
+  onConfirm: () => void;
 };
 
 // A modal that asks before an action: only confirming runs it, Cancel or Escape close it.

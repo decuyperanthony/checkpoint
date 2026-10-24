@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { Card as PrimitiveCard, CardContent, CardHeader } from "@/shared/ui/primitives/card";
 
 type CardProps = {
-  readonly header?: ReactNode;
-  readonly children: ReactNode;
+  header?: ReactNode;
+  children: ReactNode;
 };
 
 export const Card = ({ header, children }: CardProps) => (

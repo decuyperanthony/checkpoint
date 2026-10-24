@@ -11,8 +11,8 @@ import { Stack } from "@/shared/ui/Stack";
 const SectionForm = createForm(SectionTitlePayload);
 
 type RenameSectionFormProps = {
-  readonly section: Section;
-  readonly onClose: () => void;
+  section: Section;
+  onClose: () => void;
 };
 
 // The section title edited in place: Enter saves, Escape or Cancel leave without saving.

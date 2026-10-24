@@ -23,8 +23,8 @@ const sizes = {
 } as const satisfies { [K in Size]: { size: PrimitiveProps["size"]; className: string | undefined } };
 
 type ButtonProps = Omit<ComponentProps<"button">, "className" | "style"> & {
-  readonly variant?: ButtonVariant;
-  readonly size?: Size;
+  variant?: ButtonVariant;
+  size?: Size;
 };
 
 export const Button = ({ variant = "primary", size = "md", type = "button", ...props }: ButtonProps) => (

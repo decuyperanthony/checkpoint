@@ -14,9 +14,9 @@ import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
 
 type ItemRowProps = {
-  readonly item: Item;
+  item: Item;
   // Its section's title, so that rows with the same text in two sections have distinct names.
-  readonly sectionTitle: Section["title"];
+  sectionTitle: Section["title"];
 };
 
 export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {

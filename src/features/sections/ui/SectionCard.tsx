@@ -15,8 +15,8 @@ import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
 
 type SectionCardProps = {
-  readonly section: Section;
-  readonly children?: ReactNode;
+  section: Section;
+  children?: ReactNode;
 };
 
 export const SectionCard = ({ section, children }: SectionCardProps) => {

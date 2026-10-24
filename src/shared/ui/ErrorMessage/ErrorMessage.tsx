@@ -6,7 +6,7 @@ import { toApiError } from "@/shared/lib/api";
 import { errorMessageKey } from "@/shared/lib/errorMessage";
 
 type ErrorMessageProps = {
-  readonly error: unknown;
+  error: unknown;
 };
 
 // The translated message for any error, wherever it is shown (toast, screen).
