@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import { Field, type FieldProps } from "@/shared/ui/Field";
+import { Field, useField, type FieldProps } from "@/shared/ui/Field";
 import { Input } from "@/shared/ui/primitives/input";
 import type { Size } from "@/shared/ui/tokens";
 
@@ -16,12 +16,16 @@ type TextFieldProps = Omit<
   ComponentProps<"input">,
   "className" | "style" | "size" | "id" | "aria-invalid" | "aria-describedby"
 > &
-  Omit<FieldProps, "children"> & {
+  FieldProps & {
     readonly size?: Size;
   };
 
-export const TextField = ({ label, labelVisibility, error, size = "md", ...props }: TextFieldProps) => (
-  <Field label={label} labelVisibility={labelVisibility} error={error}>
-    {(control) => <Input {...props} {...control} className={sizes[size]} />}
-  </Field>
-);
+export const TextField = ({ label, labelVisibility, error, size = "md", ...props }: TextFieldProps) => {
+  const { field, control } = useField(error);
+
+  return (
+    <Field {...field} label={label} labelVisibility={labelVisibility} error={error}>
+      <Input {...props} {...control} className={sizes[size]} />
+    </Field>
+  );
+};

@@ -14,7 +14,8 @@
     "add": "Ajouter",
     "save": "Enregistrer",
     "cancel": "Annuler",
-    "remove": "Supprimer"
+    "remove": "Supprimer",
+    "removeTitle": "Supprimer « {name} » ?"
   },
   "errors": {
     "sectionNotFound": "Cette section n'existe plus.",
@@ -28,7 +29,6 @@
     "rename": "Renommer la section {title}",
     "remove": "Supprimer la section {title}",
     "titleInvalid": "Le titre doit faire entre 1 et {max} caractères.",
-    "removeTitle": "Supprimer « {title} » ?",
     "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
   },
   "items": {
@@ -37,7 +37,6 @@
     "contentInvalid": "Le texte doit faire entre 1 et {max} caractères.",
     "edit": "Modifier l'élément {content} dans {section}",
     "remove": "Supprimer l'élément {content} dans {section}",
-    "removeTitle": "Supprimer « {content} » ?",
     "removeDescription": "L'élément sera supprimé définitivement."
   }
 }

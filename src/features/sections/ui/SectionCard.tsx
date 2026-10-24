@@ -1,19 +1,19 @@
 "use client";
 
-import { ListChecksIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { ListChecksIcon, PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { sectionTitleMaxLength, type Section } from "@/contract/schemas/Section";
+import type { Section } from "@/contract/schemas/Section";
 import { useRemoveSection, useRenameSection } from "@/features/sections/api/sections";
-import { titleResolver } from "@/features/sections/model/titleForm";
-import { useReturnFocus } from "@/shared/lib/useReturnFocus";
+import { useTitleField } from "@/features/sections/model/titleField";
+import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Card } from "@/shared/ui/Card";
-import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
+import { EditForm } from "@/shared/ui/EditForm";
 import { IconButton } from "@/shared/ui/IconButton";
 import { IconTitle } from "@/shared/ui/IconTitle";
+import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
-import { TextForm } from "@/shared/ui/TextForm";
 
 type SectionCardProps = {
   readonly section: Section;
@@ -22,37 +22,28 @@ type SectionCardProps = {
 
 export const SectionCard = ({ section, children }: SectionCardProps) => {
   const t = useTranslations("sections");
-  const [editing, setEditing] = useState(false);
+  const { editing, triggerRef, open, close } = useInlineEdit();
+  const field = useTitleField();
   const rename = useRenameSection();
   const remove = useRemoveSection();
 
-  const renameButton = useReturnFocus<HTMLButtonElement>(editing);
-
   const header = editing ? (
-    <TextForm
+    <EditForm
       label={t("title", { title: section.title })}
-      invalidMessage={t("titleInvalid", { max: sectionTitleMaxLength })}
-      resolver={titleResolver}
-      maxLength={sectionTitleMaxLength}
-      defaultValue={section.title}
+      field={field}
+      value={section.title}
       pending={rename.isPending}
-      onSubmit={(title) => rename.mutate({ id: section.id, title }, { onSuccess: () => setEditing(false) })}
-      edit={{ onCancel: () => setEditing(false) }}
+      onSave={(title) => rename.mutate({ id: section.id, title }, { onSuccess: close })}
+      onCancel={close}
     />
   ) : (
     <Stack direction="row" justify="between">
       <IconTitle icon={ListChecksIcon}>{section.title}</IconTitle>
       <Stack direction="row" gap="sm">
-        <IconButton
-          ref={renameButton}
-          icon={PencilIcon}
-          label={t("rename", { title: section.title })}
-          onClick={() => setEditing(true)}
-        />
-        <ConfirmRemoveButton
-          icon={Trash2Icon}
+        <IconButton ref={triggerRef} icon={PencilIcon} label={t("rename", { title: section.title })} onClick={open} />
+        <RemoveButton
+          name={section.title}
           label={t("remove", { title: section.title })}
-          title={t("removeTitle", { title: section.title })}
           description={t("removeDescription")}
           disabled={remove.isPending}
           onConfirm={() => remove.mutate(section.id)}
