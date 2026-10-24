@@ -47,9 +47,17 @@ const database: ImportRestriction = {
   message: "Services depend on repository interfaces, never on the database.",
 };
 
-const restrictImports = (...patterns: Array<ImportRestriction>) => ({
+const formLibrary: ImportRestriction = {
+  group: ["react-hook-form", "react-hook-form/**", "@hookform/*", "@hookform/**"],
+  message: "Build forms with createForm (@/shared/form): fields typed by the schema, errors translated in one place.",
+};
+
+const noRestrictedImports = (patterns: Array<ImportRestriction>) => ({
   "no-restricted-imports": ["error", { patterns }] satisfies ["error", { patterns: Array<ImportRestriction> }],
 });
+
+// Every folder also keeps the form library behind the form kit.
+const restrictImports = (...patterns: Array<ImportRestriction>) => noRestrictedImports([...patterns, formLibrary]);
 
 export default defineConfig({
   plugins: ["typescript", "unicorn", "oxc", "import", "react", "nextjs", "jsx-a11y", "vitest"],
@@ -117,6 +125,8 @@ export default defineConfig({
       },
     ]),
     { files: ["src/server/services/**"], rules: restrictImports(shadcnAtoms, database, parentImports) },
+    // The form kit is the only place that uses React Hook Form.
+    { files: ["src/shared/form/**"], rules: noRestrictedImports([shadcnAtoms]) },
   ],
   ignorePatterns: [".next/**", "node_modules/**", "drizzle/**"],
 });
