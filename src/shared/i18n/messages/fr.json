@@ -30,5 +30,14 @@
     "titleInvalid": "Le titre doit faire entre 1 et 200 caractères.",
     "removeTitle": "Supprimer « {title} » ?",
     "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
+  },
+  "items": {
+    "newContent": "Nouvel élément dans {section}",
+    "content": "Texte de l'élément {content}",
+    "contentInvalid": "Le texte doit faire entre 1 et {max} caractères.",
+    "edit": "Modifier l'élément {content}",
+    "remove": "Supprimer l'élément {content}",
+    "removeTitle": "Supprimer « {content} » ?",
+    "removeDescription": "L'élément sera supprimé définitivement."
   }
 }
