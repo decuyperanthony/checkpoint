@@ -8,15 +8,16 @@ import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { Button } from "@/shared/ui/Button";
 import { ErrorMessage } from "@/shared/ui/ErrorMessage";
 import { Stack } from "@/shared/ui/Stack";
+import { Text } from "@/shared/ui/Text";
 
 const ScreenError = ({ error, resetErrorBoundary }: FallbackProps) => {
   const t = useTranslations();
 
   return (
     <Stack gap="lg">
-      <p role="alert">
+      <Text role="alert">
         <ErrorMessage error={error} />
-      </p>
+      </Text>
       <Button variant="secondary" onClick={resetErrorBoundary}>
         {t("screen.retry")}
       </Button>
