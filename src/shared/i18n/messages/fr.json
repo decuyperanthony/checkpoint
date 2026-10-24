@@ -14,5 +14,16 @@
     "sectionNotFound": "Cette section n'existe plus.",
     "itemNotFound": "Cet élément n'existe plus.",
     "unexpected": "Une erreur est survenue. Réessaie dans un instant."
+  },
+  "sections": {
+    "empty": "Aucune section pour l'instant.",
+    "newTitle": "Nouvelle section",
+    "add": "Ajouter",
+    "title": "Titre de la section",
+    "rename": "Renommer la section",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "remove": "Supprimer la section",
+    "titleInvalid": "Le titre doit faire entre 1 et 200 caractères."
   }
 }
