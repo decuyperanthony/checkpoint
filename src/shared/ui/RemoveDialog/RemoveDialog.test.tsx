@@ -4,22 +4,24 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithIntl } from "@/shared/testing/renderWithIntl";
 
-import { RemoveButton } from "./RemoveButton";
+import { RemoveDialog } from "./RemoveDialog";
 
-describe("RemoveButton", () => {
+describe("RemoveDialog", () => {
   it("asks about the named thing before removing it", async () => {
     const onConfirm = vi.fn<() => void>();
     renderWithIntl(
-      <RemoveButton
+      <RemoveDialog
         name="Courses"
-        label="Supprimer la section Courses"
         description="Définitif."
+        open
+        onOpenChange={vi.fn<(open: boolean) => void>()}
         onConfirm={onConfirm}
       />,
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Supprimer la section Courses" }));
-    expect(screen.getByRole("alertdialog", { name: "Supprimer « Courses » ?" })).toBeInTheDocument();
+    expect(screen.getByRole("alertdialog", { name: "Supprimer « Courses » ?" })).toHaveAccessibleDescription(
+      "Définitif.",
+    );
     await userEvent.click(screen.getByRole("button", { name: "Supprimer" }));
 
     expect(onConfirm).toHaveBeenCalledOnce();

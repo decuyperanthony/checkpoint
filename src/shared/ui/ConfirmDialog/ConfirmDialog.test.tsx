@@ -1,22 +1,36 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderWithIntl } from "@/shared/testing/renderWithIntl";
 
 import { ConfirmDialog } from "./ConfirmDialog";
 
+// Opened by its owner, as a menu would.
+const Archive = ({ onConfirm }: { onConfirm: () => void }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Archive
+      </button>
+      <ConfirmDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Archive the list?"
+        description="It can be restored later."
+        confirmLabel="Archive it"
+        onConfirm={onConfirm}
+      />
+    </>
+  );
+};
+
 const renderDialog = () => {
   const onConfirm = vi.fn<() => void>();
-  renderWithIntl(
-    <ConfirmDialog
-      trigger={<button type="button">Archive</button>}
-      title="Archive the list?"
-      description="It can be restored later."
-      confirmLabel="Archive it"
-      onConfirm={onConfirm}
-    />,
-  );
+  renderWithIntl(<Archive onConfirm={onConfirm} />);
   return onConfirm;
 };
 
