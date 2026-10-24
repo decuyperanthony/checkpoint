@@ -48,7 +48,7 @@ export const ItemRow = ({ item }: ItemRowProps) => {
         label={item.content}
         checked={item.done}
         checkedStyle="strikethrough"
-        disabled={update.isPending}
+        pending={update.isPending}
         onCheckedChange={(done) => update.mutate({ id: item.id, changes: { done } })}
       />
       <Stack direction="row" gap="sm">

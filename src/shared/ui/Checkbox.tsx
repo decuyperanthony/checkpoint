@@ -18,6 +18,9 @@ type CheckboxProps = {
   readonly onCheckedChange: (checked: boolean) => void;
   readonly checkedStyle?: CheckedStyle;
   readonly disabled?: boolean;
+  // While a change is being saved: further changes are ignored, but unlike `disabled` the
+  // checkbox keeps keyboard focus.
+  readonly pending?: boolean;
 };
 
 export const Checkbox = ({
@@ -26,6 +29,7 @@ export const Checkbox = ({
   onCheckedChange,
   checkedStyle = "plain",
   disabled = false,
+  pending = false,
 }: CheckboxProps) => {
   const id = useId();
 
@@ -35,7 +39,10 @@ export const Checkbox = ({
         id={id}
         checked={checked}
         disabled={disabled}
-        onCheckedChange={(state) => onCheckedChange(state === true)}
+        aria-disabled={pending}
+        onCheckedChange={(state) => {
+          if (!pending) onCheckedChange(state === true);
+        }}
       />
       <Label htmlFor={id} className={labelStyles[checkedStyle]}>
         {label}

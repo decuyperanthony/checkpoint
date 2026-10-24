@@ -22,4 +22,15 @@ describe("Checkbox", () => {
 
     expect(onCheckedChange).toHaveBeenCalledWith(false);
   });
+
+  it("ignores changes while the previous one is pending, without losing focus", async () => {
+    const onCheckedChange = vi.fn<(checked: boolean) => void>();
+    render(<Checkbox label="Buy milk" checked={false} pending onCheckedChange={onCheckedChange} />);
+    const checkbox = screen.getByRole("checkbox", { name: "Buy milk" });
+
+    await userEvent.click(checkbox);
+
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(checkbox).toHaveFocus();
+  });
 });
