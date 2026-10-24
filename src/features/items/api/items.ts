@@ -1,4 +1,5 @@
 import { useMutation, usePrefetchQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { startTransition, useOptimistic } from "react";
 
 import type { Item, UpdateItemPayload } from "@/contract/schemas/Item";
 import type { SectionId } from "@/contract/schemas/Section";
@@ -34,6 +35,22 @@ export const useUpdateItem = () => {
       callApi((api) => api.items.update({ params: { id }, payload: changes })),
     onSuccess: invalidate,
   });
+};
+
+// Checks or unchecks an item at once, without waiting for the API. The box shows the new state
+// until the change is saved and the list refetched, and goes back if the change fails.
+export const useCheckItem = (item: Item) => {
+  const update = useUpdateItem();
+  const [done, setOptimisticDone] = useOptimistic(item.done);
+
+  const check = (next: Item["done"]) =>
+    startTransition(async () => {
+      setOptimisticDone(next);
+      // A failure already reaches the user through the mutation cache: only the box goes back.
+      await update.mutateAsync({ id: item.id, changes: { done: next } }).catch(() => undefined);
+    });
+
+  return { done, check };
 };
 
 export const useRemoveItem = () => {
