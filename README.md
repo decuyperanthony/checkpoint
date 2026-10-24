@@ -1,57 +1,55 @@
-# Next.js i18n Dashboard Starter
+# checkpoint
 
-![Localizely progress](https://img.shields.io/localizely/progress/314cdb30-1e80-4acf-afbf-6195d164ca77?token=9b2c2727a3334e25952ea204a6cc8708c8465e4ae300425caff926fbc627ada7&languageCode=en) ![Localizely progress](https://img.shields.io/localizely/progress/314cdb30-1e80-4acf-afbf-6195d164ca77?token=9b2c2727a3334e25952ea204a6cc8708c8465e4ae300425caff926fbc627ada7&languageCode=de) ![Localizely progress](https://img.shields.io/localizely/progress/314cdb30-1e80-4acf-afbf-6195d164ca77?token=9b2c2727a3334e25952ea204a6cc8708c8465e4ae300425caff926fbc627ada7&languageCode=fr)
+A single-page checklist: titled sections containing checkable items, behind a PIN code. Built as a reference codebase for [Effect](https://effect.website) on a Next.js server.
 
-A dashboard template built with Next.js, Tailwind CSS, and React Intl. This template not only features internationalized routing but also showcases an array of localization features, making it an ideal starting point for building globally-friendly dashboard applications.
+## Stack
 
-![demo](/public/demo.png)
+- **Next.js** (App Router, TypeScript strict), deployed on Vercel
+- **Effect 4** on the server: `HttpApi`, `Schema`, `Config`, services and Layers
+- **Neon Postgres** through **Drizzle**
+- **Tailwind CSS + shadcn/ui**, **TanStack Query**, **React Hook Form**
+- **oxlint + oxfmt**, **Vitest**
 
-## Demo
+## Architecture
 
-View a working [demo](https://nextjs-i18n-dashboard-template.vercel.app/).
-
-## Requirements
-
-- Node.js >=20.17.0
-- npm >=10.8.2
-
-## Getting Started
-
-Run this Next.js app on your local machine by following the instructions below:
-
-```bash
-# Clone the repository from GitHub
-git clone https://github.com/localizely/nextjs-i18n-dashboard-template.git
-
-# Navigate into the cloned repository
-cd nextjs-i18n-dashboard-template
-
-# Install project dependencies
-npm install
-
-# Start the development server
-npm run dev
+```
+src/
+  app/            Next routes only — thin, no logic
+  contract/       Shared by front and back: schemas, errors, HttpApi definition
+  server/
+    services/     Business logic, depends on repository interfaces only
+    repositories/ Database access, provided by Layers (Drizzle, or in-memory in tests)
+    infra/        Config, database Layer, logger
+    handlers/     HttpApi implementation
+  features/       sections, items, auth — each with ui/, api/ (query hooks), model/
+  shared/
+    ui/           Design system; shadcn atoms in ui/primitives are private to it
+    lib/          API client, query client, utilities
 ```
 
-## Deploy on Vercel
+Boundaries are enforced by the linter (`oxlint.config.ts`): a feature never imports another feature, services never touch the database directly, and UI components never use Effect.
 
-Deploy this ready-to-use template on Vercel by clicking the button below.
+## Getting started
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flzoran%2Fnextjs-i18n-dashboard-template)
+Requirements: Node 24+, pnpm.
 
-## Translation
+```sh
+pnpm install
+pnpm dev
+```
 
-Translating localization files can become increasingly complex, especially as your project expands. [**Localizely**](https://localizely.com/) simplifies the translation process, tracks progress, and seamlessly integrates localization into your workflow. It offers a variety of integrations, including [GitHub](https://localizely.com/github-integration/), [GitLab](https://localizely.com/gitlab-integration/), [Bitbucket](https://localizely.com/bitbucket-integration/), and [Figma](https://localizely.com/figma-integration/), along with powerful features such as [Reports and Statistics](https://localizely.com/reports-and-statistics/), [Machine Translation](https://localizely.com/machine-translation/), [Translation Memory](https://localizely.com/translation-memory/), and a [Glossary](https://localizely.com/project-glossary/).
+## Scripts
 
-To simplify the translation process, navigate to [Localizely](https://app.localizely.com/register) and create a new project. Afterwards, update the `localizely.yml` file with the missing data (e.g., project_id) and integrate localization into your workflow in a manner that best suits your needs, whether that's by using the [Localizely CLI](https://localizely.com/cli/) tool or any of the available integrations.
+| Script              | Purpose              |
+| ------------------- | -------------------- |
+| `pnpm dev`          | Start the dev server |
+| `pnpm build`        | Production build     |
+| `pnpm typecheck`    | TypeScript           |
+| `pnpm lint`         | oxlint               |
+| `pnpm format`       | Format with oxfmt    |
+| `pnpm format:check` | Check formatting     |
+| `pnpm test`         | Vitest               |
 
-## Contribution
+## License
 
-Feel free to share your ideas and report any issues on the template's [GitHub repo](https://github.com/lzoran/nextjs-i18n-dashboard-template/issues).
-
-## Useful links
-
-- [Next.js documentation](https://nextjs.org/docs)
-- [Next.js deployment documentation](https://nextjs.org/docs/deployment)
-- [Next.js internationalization (i18n) tutorial](https://localizely.com/blog/nextjs-i18n-tutorial/?tab=app-router)
-- [React Intl documentation](https://formatjs.io/docs/react-intl/)
+[MIT](LICENSE)
