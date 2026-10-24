@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes } from "react";
 
 import { cn } from "@/shared/lib/cn";
 import type { Size, Tone } from "@/shared/ui/tokens";
@@ -17,18 +17,16 @@ const tones = {
   error: "text-error",
 } as const satisfies { [K in "default" | "muted" | Tone]: string | undefined };
 
-type TextProps = {
+type TextElement = "p" | "span" | "div" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+// Every native attribute (`id`, `role`, `aria-*`…) except styling, which goes through the tokens.
+type TextProps = Omit<HTMLAttributes<HTMLElement>, "className" | "style"> & {
+  readonly as?: TextElement;
   readonly size?: Size;
   readonly tone?: keyof typeof tones;
-  // `alert` makes screen readers announce the text as soon as it appears.
-  readonly role?: "alert";
-  readonly id?: string;
-  readonly children: ReactNode;
 };
 
-// A paragraph, so features never write their own `<p>` or typography classes.
-export const Text = ({ size = "md", tone = "default", role, id, children }: TextProps) => (
-  <p id={id} role={role} className={cn(sizes[size], tones[tone])}>
-    {children}
-  </p>
+// Text with design tokens, so features never write their own `<p>` or typography classes.
+export const Text = ({ as: Element = "p", size = "md", tone = "default", ...props }: TextProps) => (
+  <Element {...props} className={cn(sizes[size], tones[tone])} />
 );
