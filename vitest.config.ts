@@ -9,8 +9,21 @@ export default defineConfig({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
   test: {
-    environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
     passWithNoTests: true,
+    projects: [
+      {
+        extends: true,
+        test: { name: "server", include: ["src/server/**/*.test.ts"], environment: "node" },
+      },
+      {
+        extends: true,
+        test: {
+          name: "ui",
+          include: ["src/{features,shared}/**/*.test.{ts,tsx}"],
+          environment: "jsdom",
+          setupFiles: ["./vitest.setup.ts"],
+        },
+      },
+    ],
   },
 });
