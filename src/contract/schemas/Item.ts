@@ -5,7 +5,9 @@ import { SectionId } from "@/contract/schemas/Section";
 export const ItemId = Schema.String.check(Schema.isUUID()).pipe(Schema.brand("ItemId"));
 export type ItemId = typeof ItemId.Type;
 
-export const ItemContent = Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(500));
+export const itemContentMaxLength = 500;
+
+export const ItemContent = Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(itemContentMaxLength));
 
 export const Item = Schema.Struct({
   id: ItemId,
