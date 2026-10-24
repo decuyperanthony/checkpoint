@@ -77,7 +77,7 @@ export default defineConfig({
   },
   overrides: [
     { files: ["src/app/**/*.tsx"], rules: restrictImports(shadcnAtoms, effectRuntime) },
-    { files: ["src/**/*.tsx", "src/shared/ui/**"], rules: { "checkpoint/design-tokens": "error" } },
+    { files: ["src/**/*.{ts,tsx}"], rules: { "checkpoint/design-tokens": "error" } },
     { files: ["src/shared/ui/**"], rules: restrictImports(effectRuntime) },
     // shadcn atoms are vendored as generated, so they can be updated with the shadcn CLI.
     {
