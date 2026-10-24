@@ -36,10 +36,13 @@ describe("Board items", () => {
     expect(field).toHaveFocus();
     expect(field).toHaveValue("");
     await addItem("Courses", "Pain");
-    await addItem("Travail", "Rapport");
+    await userEvent.type(screen.getByRole("textbox", { name: "Nouvel élément dans Travail" }), "Lait{Enter}");
 
-    expect(screen.getAllByRole("checkbox", { name: "Lait" })).toHaveLength(1);
-    expect(screen.getAllByRole("checkbox", { name: "Rapport" })).toHaveLength(1);
+    await vi.waitFor(() => expect(screen.getAllByRole("checkbox", { name: "Lait" })).toHaveLength(2));
+    expect(screen.getAllByRole("checkbox", { name: "Pain" })).toHaveLength(1);
+    // Same text in two sections: their actions still have distinct names.
+    expect(screen.getByRole("button", { name: "Modifier l'élément Lait dans Courses" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Modifier l'élément Lait dans Travail" })).toBeInTheDocument();
   });
 
   it("checks an item, then unchecks it", async () => {
@@ -60,14 +63,14 @@ describe("Board items", () => {
     await addSection("Courses");
     await addItem("Courses", "Lait");
 
-    await userEvent.click(screen.getByRole("button", { name: "Modifier l'élément Lait" }));
-    const field = screen.getByRole("textbox", { name: "Texte de l'élément Lait" });
+    await userEvent.click(screen.getByRole("button", { name: "Modifier l'élément Lait dans Courses" }));
+    const field = screen.getByRole("textbox", { name: "Texte de l'élément Lait dans Courses" });
     expect(field).toHaveFocus();
     await userEvent.clear(field);
     await userEvent.type(field, "Lait d'avoine{Enter}");
 
     expect(await screen.findByRole("checkbox", { name: "Lait d'avoine" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Modifier l'élément Lait d'avoine" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Modifier l'élément Lait d'avoine dans Courses" })).toHaveFocus();
   });
 
   it("refuses a blank item without calling the API", async () => {
@@ -86,11 +89,11 @@ describe("Board items", () => {
     await addSection("Courses");
     await addItem("Courses", "Lait");
 
-    await userEvent.click(screen.getByRole("button", { name: "Supprimer l'élément Lait" }));
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer l'élément Lait dans Courses" }));
     await userEvent.click(screen.getByRole("button", { name: "Annuler" }));
     expect(screen.getByRole("checkbox", { name: "Lait" })).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole("button", { name: "Supprimer l'élément Lait" }));
+    await userEvent.click(screen.getByRole("button", { name: "Supprimer l'élément Lait dans Courses" }));
     await userEvent.click(screen.getByRole("button", { name: "Supprimer" }));
 
     await vi.waitFor(() => expect(screen.queryByRole("checkbox", { name: "Lait" })).not.toBeInTheDocument());

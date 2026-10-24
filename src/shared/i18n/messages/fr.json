@@ -33,10 +33,10 @@
   },
   "items": {
     "newContent": "Nouvel élément dans {section}",
-    "content": "Texte de l'élément {content}",
+    "content": "Texte de l'élément {content} dans {section}",
     "contentInvalid": "Le texte doit faire entre 1 et {max} caractères.",
-    "edit": "Modifier l'élément {content}",
-    "remove": "Supprimer l'élément {content}",
+    "edit": "Modifier l'élément {content} dans {section}",
+    "remove": "Supprimer l'élément {content} dans {section}",
     "removeTitle": "Supprimer « {content} » ?",
     "removeDescription": "L'élément sera supprimé définitivement."
   }

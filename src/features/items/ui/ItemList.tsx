@@ -27,7 +27,7 @@ export const ItemList = ({ section }: ItemListProps) => {
       {items
         .filter((item) => item.sectionId === section.id)
         .map((item) => (
-          <ItemRow key={item.id} item={item} />
+          <ItemRow key={item.id} item={item} sectionTitle={section.title} />
         ))}
       <TextForm
         key={formKey}
