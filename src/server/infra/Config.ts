@@ -44,3 +44,20 @@ export class AppConfig extends Context.Service<AppConfig>()("checkpoint/AppConfi
 }) {
   static readonly layer = Layer.effect(this, this.make);
 }
+
+// An argon2id hash, as printed by `pnpm hash-pin`: never the PIN itself.
+const Argon2idHash = Schema.String.check(Schema.isPattern(/^\$argon2id\$v=\d+\$m=\d+,t=\d+,p=\d+\$[\w+/]+\$[\w+/]+$/));
+
+// Apart from AppConfig so that only what authenticates needs `PIN_HASH`.
+export class AuthConfig extends Context.Service<AuthConfig>()("checkpoint/AuthConfig", {
+  make: Effect.gen(function* () {
+    const pinHash = yield* environmentVariable({
+      name: "PIN_HASH",
+      schema: Argon2idHash,
+      expected: "an argon2id hash, from `pnpm hash-pin`",
+    });
+    return { pinHash: Redacted.make(pinHash) };
+  }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}
