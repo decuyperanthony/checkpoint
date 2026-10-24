@@ -31,14 +31,13 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
   const header = editing ? (
     <TextForm
       label={t("title", { title: section.title })}
-      submitLabel={t("save")}
       invalidMessage={t("titleInvalid")}
       resolver={titleResolver}
       maxLength={sectionTitleMaxLength}
       defaultValue={section.title}
       pending={rename.isPending}
       onSubmit={(title) => rename.mutate({ id: section.id, title }, { onSuccess: () => setEditing(false) })}
-      edit={{ cancelLabel: t("cancel"), onCancel: () => setEditing(false) }}
+      edit={{ onCancel: () => setEditing(false) }}
     />
   ) : (
     <Stack direction="row" justify="between">
@@ -55,8 +54,6 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
           label={t("remove", { title: section.title })}
           title={t("removeTitle", { title: section.title })}
           description={t("removeDescription")}
-          confirmLabel={t("removeConfirm")}
-          cancelLabel={t("cancel")}
           disabled={remove.isPending}
           onConfirm={() => remove.mutate(section.id)}
         />

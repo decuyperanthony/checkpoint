@@ -33,7 +33,6 @@ export const SectionList = ({ renderContent }: SectionListProps) => {
       <TextForm
         key={formKey}
         label={t("newTitle")}
-        submitLabel={t("add")}
         invalidMessage={t("titleInvalid")}
         resolver={titleResolver}
         maxLength={sectionTitleMaxLength}
