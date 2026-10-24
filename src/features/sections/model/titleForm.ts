@@ -1,7 +1,4 @@
-import { effectTsResolver } from "@hookform/resolvers/effect-ts";
-import { Schema } from "effect";
-
 import { SectionTitle } from "@/contract/schemas/Section";
+import { textFormResolver } from "@/shared/lib/textFormResolver";
 
-// Forms validate with the same schema the API decodes with.
-export const titleResolver = effectTsResolver(Schema.Struct({ value: SectionTitle }));
+export const titleResolver = textFormResolver(SectionTitle);
