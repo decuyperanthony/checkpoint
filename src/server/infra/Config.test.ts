@@ -3,15 +3,21 @@ import { describe, expect, it } from "vitest";
 
 import { loadAppConfig } from "./Config";
 
-const withEnv = (env: { readonly DATABASE_URL?: string }) =>
-  Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnv({ env })));
+type TestEnv = { readonly DATABASE_URL?: string };
 
-const configError = (env: { readonly DATABASE_URL?: string }) =>
-  Effect.runPromise(loadAppConfig.pipe(Effect.flip, withEnv(env)));
+const withEnv = (env: TestEnv) => Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnv({ env })));
+
+const configError = (env: TestEnv) => Effect.runPromise(loadAppConfig.pipe(Effect.flip, withEnv(env)));
 
 describe("loadAppConfig", () => {
   it("names the variable when it is missing", async () => {
     const error = await configError({});
+
+    expect(error.message).toBe("Environment variable DATABASE_URL is missing.");
+  });
+
+  it("treats a blank value as missing", async () => {
+    const error = await configError({ DATABASE_URL: "  " });
 
     expect(error.message).toBe("Environment variable DATABASE_URL is missing.");
   });

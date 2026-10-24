@@ -19,7 +19,9 @@ type EnvironmentVariable<A> = {
 
 const environmentVariable = <A>({ name, schema, expected }: EnvironmentVariable<A>) =>
   Effect.gen(function* () {
-    const raw = yield* Config.option(Config.String(name));
+    const raw = yield* Config.option(Config.String(name)).pipe(
+      Config.map(Option.filter((value) => value.trim() !== "")),
+    );
     if (Option.isNone(raw)) {
       return yield* new InvalidEnvironment({ variable: name, reason: "is missing" });
     }
