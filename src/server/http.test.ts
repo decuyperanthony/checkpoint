@@ -178,6 +178,11 @@ describe("auth API", () => {
     expect(await responses[0]?.text()).toBe(JSON.stringify({ _tag: "SessionExpired" }));
   });
 
+  it("says whether the session is valid", async () => {
+    expect((await send("GET", "/auth/session")).status).toBe(204);
+    expect((await request("GET", "/auth/session")).status).toBe(401);
+  });
+
   it("refuses a wrong PIN without opening a session", async () => {
     const response = await logIn("0000");
 

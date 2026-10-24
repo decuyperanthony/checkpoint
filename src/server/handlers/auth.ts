@@ -20,19 +20,23 @@ export const AuthHandlers = HttpApiBuilder.group(
   Effect.fnUntraced(function* (handlers) {
     const auth = yield* AuthService;
 
-    return handlers
-      .handle("login", ({ payload }) =>
-        Effect.gen(function* () {
-          const request = yield* HttpServerRequest.HttpServerRequest;
-          const { token, expiresAt } = yield* auth.login({ pin: Redacted.make(payload.pin), ip: clientIp(request) });
-          yield* HttpApiBuilder.securitySetCookie(sessionCookie, token, { ...cookieOptions, expires: expiresAt });
-        }),
-      )
-      .handle("logout", () =>
-        Effect.gen(function* () {
-          yield* auth.logout(yield* HttpApiBuilder.securityDecode(sessionCookie));
-          yield* HttpApiBuilder.securitySetCookie(sessionCookie, "", { ...cookieOptions, maxAge: 0 });
-        }),
-      );
+    return (
+      handlers
+        // The middleware has already checked the session.
+        .handle("session", () => Effect.void)
+        .handle("login", ({ payload }) =>
+          Effect.gen(function* () {
+            const request = yield* HttpServerRequest.HttpServerRequest;
+            const { token, expiresAt } = yield* auth.login({ pin: Redacted.make(payload.pin), ip: clientIp(request) });
+            yield* HttpApiBuilder.securitySetCookie(sessionCookie, token, { ...cookieOptions, expires: expiresAt });
+          }),
+        )
+        .handle("logout", () =>
+          Effect.gen(function* () {
+            yield* auth.logout(yield* HttpApiBuilder.securityDecode(sessionCookie));
+            yield* HttpApiBuilder.securitySetCookie(sessionCookie, "", { ...cookieOptions, maxAge: 0 });
+          }),
+        )
+    );
   }),
 );

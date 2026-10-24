@@ -10,37 +10,50 @@ const build = () =>
     disableLogger: true,
   });
 
-// The `name=value` part of a Set-Cookie header, as a browser would send it back.
-const sessionCookieOf = (response: Response) => response.headers.get("set-cookie")?.split(";")[0] ?? "";
+// The real API on an in-memory store, callable as `fetch`: screen tests exercise the same
+// handlers, validation and errors as production, without a database or a hand-written mock.
+// Like a browser, it keeps the session cookie the API sets and sends it back. It starts logged
+// in, unless `loggedIn` is false.
+export const makeFakeApi = ({ loggedIn = true }: { loggedIn?: boolean } = {}) => {
+  let app = build();
+  let cookie = "";
 
-const logIn = async (app: ReturnType<typeof build>) => {
-  const response = await app.handler(
-    new Request("http://localhost/api/auth/login", {
+  const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const request = new Request(input, init);
+    if (cookie !== "") request.headers.set("cookie", cookie);
+    const response = await app.handler(request);
+    const setCookie = response.headers.get("set-cookie");
+    if (setCookie !== null) {
+      // `name=value`, as a browser sends it back; an emptied cookie is gone.
+      const [pair = ""] = setCookie.split(";");
+      cookie = pair.endsWith("=") ? "" : pair;
+    }
+    return response;
+  };
+
+  const logIn = () =>
+    fetch("http://localhost/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ pin: testPin }),
       headers: { "content-type": "application/json" },
-    }),
-  );
-  return sessionCookieOf(response);
-};
+    });
 
-// The real API on an in-memory store, callable as `fetch`: screen tests exercise the same
-// handlers, validation and errors as production, without a database or a hand-written mock.
-// It starts logged in and sends the session cookie back, like the browser.
-export const makeFakeApi = () => {
-  let app = build();
-  let cookie = logIn(app);
+  let ready = loggedIn ? logIn() : Promise.resolve();
 
   return {
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
-      const request = new Request(input, init);
-      request.headers.set("cookie", await cookie);
-      return app.handler(request);
+      await ready;
+      return fetch(input, init);
+    },
+    // As if the session had expired: the browser still sends a cookie the server no longer knows.
+    expireSession: () => {
+      cookie = "__Host-checkpoint_session=expired";
     },
     reset: async () => {
       await app.dispose();
       app = build();
-      cookie = logIn(app);
+      cookie = "";
+      ready = loggedIn ? logIn() : Promise.resolve();
     },
   };
 };

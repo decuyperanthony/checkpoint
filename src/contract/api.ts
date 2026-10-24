@@ -58,9 +58,11 @@ export const ItemsGroup = HttpApiGroup.make("items")
   )
   .middleware(Authorization);
 
-// The only group without Authorization: logging in is how a session starts, and logging out
-// must work with an expired one.
+// Logging in is how a session starts and logging out must work with an expired one: only
+// `session`, added before `middleware`, requires one. It answers whether the session is valid.
 export const AuthGroup = HttpApiGroup.make("auth")
+  .add(HttpApiEndpoint.get("session", "/session"))
+  .middleware(Authorization)
   .add(HttpApiEndpoint.post("login", "/login", { payload: LoginPayload, error: [InvalidPin, TooManyAttempts] }))
   .add(HttpApiEndpoint.post("logout", "/logout"))
   .prefix("/auth");
