@@ -14,6 +14,7 @@ src/
     services/      Business logic, on repository interfaces only
     repositories/  Storage: one interface, a Drizzle Layer and an in-memory Layer
     infra/         Config, database, query helpers
+    security/      PIN verification: an interface and its argon2 Layer
     handlers/      HttpApi implementation: maps endpoints to services, nothing else
   features/      One folder per domain (sections, items): api/ (query hooks) and ui/
   shared/
