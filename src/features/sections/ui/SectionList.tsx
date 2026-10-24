@@ -8,6 +8,7 @@ import { useCreateSection, useSections } from "@/features/sections/api/sections"
 import { titleResolver } from "@/features/sections/model/titleForm";
 import { SectionCard } from "@/features/sections/ui/SectionCard";
 import { Stack } from "@/shared/ui/Stack";
+import { Text } from "@/shared/ui/Text";
 import { TextForm } from "@/shared/ui/TextForm";
 
 type SectionListProps = {
@@ -24,7 +25,7 @@ export const SectionList = ({ renderContent }: SectionListProps) => {
 
   return (
     <Stack gap="xl">
-      {sections.length === 0 ? <p>{t("empty")}</p> : null}
+      {sections.length === 0 ? <Text>{t("empty")}</Text> : null}
       {sections.map((section) => (
         <SectionCard key={section.id} section={section}>
           {renderContent?.(section)}

@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from "react";
 
 import { Label } from "@/shared/ui/primitives/label";
+import { Text } from "@/shared/ui/Text";
 
 // Props a control needs to be labelled and described by its field.
 export type FieldControlProps = {
@@ -33,9 +34,9 @@ export const Field = ({ label, labelVisibility = "visible", error, children }: F
         "aria-describedby": error === undefined ? undefined : errorId,
       })}
       {error === undefined ? null : (
-        <p id={errorId} role="alert" className="text-sm text-error">
+        <Text id={errorId} role="alert" size="sm" tone="error">
           {error}
-        </p>
+        </Text>
       )}
     </div>
   );
