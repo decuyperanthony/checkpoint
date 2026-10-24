@@ -3,7 +3,9 @@ import { Schema } from "effect";
 export const SectionId = Schema.String.check(Schema.isUUID()).pipe(Schema.brand("SectionId"));
 export type SectionId = typeof SectionId.Type;
 
-export const SectionTitle = Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(200));
+export const sectionTitleMaxLength = 200;
+
+export const SectionTitle = Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(sectionTitleMaxLength));
 
 export const Section = Schema.Struct({
   id: SectionId,

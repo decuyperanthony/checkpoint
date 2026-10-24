@@ -1,13 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
-import type { Section } from "@/contract/schemas/Section";
+import { sectionTitleMaxLength, type Section } from "@/contract/schemas/Section";
 import { useCreateSection, useSections } from "@/features/sections/api/sections";
+import { titleResolver } from "@/features/sections/model/titleForm";
 import { SectionCard } from "@/features/sections/ui/SectionCard";
-import { TitleForm } from "@/features/sections/ui/TitleForm";
 import { Stack } from "@/shared/ui/Stack";
+import { TextForm } from "@/shared/ui/TextForm";
 
 type SectionListProps = {
   // Content of each section, provided by the screen (sections do not know about items).
@@ -18,6 +19,8 @@ export const SectionList = ({ renderContent }: SectionListProps) => {
   const t = useTranslations("sections");
   const { data: sections } = useSections();
   const create = useCreateSection();
+  // A new key remounts the form empty after each created section.
+  const [formKey, setFormKey] = useState(0);
 
   return (
     <Stack gap="xl">
@@ -27,11 +30,16 @@ export const SectionList = ({ renderContent }: SectionListProps) => {
           {renderContent?.(section)}
         </SectionCard>
       ))}
-      <TitleForm
+      <TextForm
+        key={formKey}
         label={t("newTitle")}
         submitLabel={t("add")}
+        invalidMessage={t("titleInvalid")}
+        resolver={titleResolver}
+        maxLength={sectionTitleMaxLength}
+        focusOnMount={formKey > 0}
         pending={create.isPending}
-        onSubmit={(title, onSaved) => create.mutate(title, { onSuccess: onSaved })}
+        onSubmit={(title) => create.mutate(title, { onSuccess: () => setFormKey((key) => key + 1) })}
       />
     </Stack>
   );
