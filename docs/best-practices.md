@@ -82,6 +82,20 @@ By convention:
   never from `process.env` elsewhere. Secrets live in `.env.local` and are never committed or logged.
 - Effect 4 imports: `effect/http-api` and `effect/http`, not `@effect/platform` (Effect 3 only).
 
+## Security
+
+- **One login, everything else behind a middleware**: `Authorization` (`HttpApiMiddleware` with a
+  cookie security scheme) is attached to every group but `auth`, in the contract, so a new endpoint
+  is protected by default: [`Authorization.ts`](../src/contract/Authorization.ts).
+- **The session cookie is `__Host-`, `httpOnly`, `Secure`, `SameSite=Lax`**: scripts cannot read it,
+  it never leaves HTTPS or crosses sites on a POST.
+- **Secrets never sit in clear**: the PIN as an argon2id hash in `PIN_HASH`, session tokens as their
+  sha256 in the database, both as `Redacted` in memory so they cannot reach a log.
+- **Attempts are limited per address** over a sliding window, checked before the PIN, and refused
+  attempts are not recorded: [`AuthService.ts`](../src/server/services/AuthService.ts).
+- **Errors say no more than needed**: an unknown and an expired session are the same `SessionExpired`;
+  a server failure is an empty 500, its cause only in the logs.
+
 ## React
 
 - **Real components, no render props.** A slot is a `ReactNode` or a compound component
