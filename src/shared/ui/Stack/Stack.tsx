@@ -1,22 +1,22 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import type { ReactNode } from "react";
 
-import { cn } from "@/shared/lib/cn";
-import type { Size } from "@/shared/ui/tokens";
+import type { Size, TokenClasses } from "@/shared/ui/tokens";
 
-const directions = { column: "flex-col", row: "flex-row items-center" } as const;
+const stack = cva("flex", {
+  variants: {
+    direction: { column: "flex-col", row: "flex-row items-center" },
+    gap: { sm: "gap-1", md: "gap-2", lg: "gap-4", xl: "gap-6" } satisfies TokenClasses<Size>,
+    justify: { start: "justify-start", between: "justify-between" },
+  },
+  defaultVariants: { direction: "column", gap: "md", justify: "start" },
+});
 
-const justifications = { start: "justify-start", between: "justify-between" } as const;
-
-const gaps = { sm: "gap-1", md: "gap-2", lg: "gap-4", xl: "gap-6" } as const satisfies { [K in Size]: string };
-
-type StackProps = {
-  readonly direction?: keyof typeof directions;
-  readonly gap?: Size;
-  readonly justify?: keyof typeof justifications;
+type StackProps = VariantProps<typeof stack> & {
   readonly children: ReactNode;
 };
 
 // Layout for features, which never write their own spacing classes.
-export const Stack = ({ direction = "column", gap = "md", justify = "start", children }: StackProps) => (
-  <div className={cn("flex", directions[direction], gaps[gap], justifications[justify])}>{children}</div>
+export const Stack = ({ direction, gap, justify, children }: StackProps) => (
+  <div className={stack({ direction, gap, justify })}>{children}</div>
 );

@@ -1,33 +1,39 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { cn } from "@/shared/lib/cn";
-import type { Size } from "@/shared/ui/tokens";
+import type { Size, TokenClasses } from "@/shared/ui/tokens";
 
 const headings = { 2: "h2", 3: "h3", 4: "h4" } as const;
 
 type HeadingLevel = keyof typeof headings;
 
-const sizes = {
-  sm: { text: "text-sm", icon: "size-4" },
-  md: { text: "text-base", icon: "size-4" },
-  lg: { text: "text-lg", icon: "size-5" },
-  xl: { text: "text-xl", icon: "size-6" },
-} as const satisfies { [K in Size]: { text: string; icon: string } };
+const title = cva("flex items-center gap-2 font-heading font-semibold", {
+  variants: {
+    size: { sm: "text-sm", md: "text-base", lg: "text-lg", xl: "text-xl" } satisfies TokenClasses<Size>,
+  },
+  defaultVariants: { size: "lg" },
+});
 
-type IconTitleProps = {
+const icon = cva("shrink-0 text-muted-foreground", {
+  variants: {
+    size: { sm: "size-4", md: "size-4", lg: "size-5", xl: "size-6" } satisfies TokenClasses<Size>,
+  },
+  defaultVariants: { size: "lg" },
+});
+
+type IconTitleProps = VariantProps<typeof title> & {
   readonly icon: LucideIcon;
   readonly level?: HeadingLevel;
-  readonly size?: Size;
   readonly children: ReactNode;
 };
 
-export const IconTitle = ({ icon: Icon, level = 2, size = "lg", children }: IconTitleProps) => {
+export const IconTitle = ({ icon: Icon, level = 2, size, children }: IconTitleProps) => {
   const Heading = headings[level];
 
   return (
-    <Heading className={cn("flex items-center gap-2 font-heading font-semibold", sizes[size].text)}>
-      <Icon aria-hidden className={cn("shrink-0 text-muted-foreground", sizes[size].icon)} />
+    <Heading className={title({ size })}>
+      <Icon aria-hidden className={icon({ size })} />
       {children}
     </Heading>
   );
