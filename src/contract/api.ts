@@ -31,7 +31,18 @@ export const SectionsGroup = HttpApiGroup.make("sections")
 const itemParams = { id: ItemId };
 
 export const ItemsGroup = HttpApiGroup.make("items")
-  .add(HttpApiEndpoint.get("list", "/items", { success: Schema.Array(Item) }))
+  .add(HttpApiEndpoint.get("list", "/", { success: Schema.Array(Item) }))
+  .add(
+    HttpApiEndpoint.patch("update", "/:id", {
+      params: itemParams,
+      payload: UpdateItemPayload,
+      success: Item,
+      error: ItemNotFound,
+    }),
+  )
+  .add(HttpApiEndpoint.delete("remove", "/:id", { params: itemParams, error: ItemNotFound }))
+  // `prefix` only applies to the endpoints added before it: creation lives under its section.
+  .prefix("/items")
   .add(
     HttpApiEndpoint.post("create", "/sections/:id/items", {
       params: sectionParams,
@@ -39,16 +50,7 @@ export const ItemsGroup = HttpApiGroup.make("items")
       success: Item.pipe(HttpApiSchema.status(201)),
       error: SectionNotFound,
     }),
-  )
-  .add(
-    HttpApiEndpoint.patch("update", "/items/:id", {
-      params: itemParams,
-      payload: UpdateItemPayload,
-      success: Item,
-      error: ItemNotFound,
-    }),
-  )
-  .add(HttpApiEndpoint.delete("remove", "/items/:id", { params: itemParams, error: ItemNotFound }));
+  );
 
 // Served by the Next.js catch-all route in `src/app/api/[[...path]]/route.ts`: the folder name
 // and this prefix must stay the same.
