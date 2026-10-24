@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 
@@ -11,7 +12,6 @@ export type TextFormValues = { readonly value: string };
 
 type TextFormProps = {
   readonly label: string;
-  readonly submitLabel: string;
   readonly invalidMessage: string;
   // Validation comes from the caller, built from the contract schema of the field.
   readonly resolver: Resolver<TextFormValues>;
@@ -22,14 +22,13 @@ type TextFormProps = {
   // Keeps keyboard focus in the field when the form is remounted, e.g. after a creation.
   readonly focusOnMount?: boolean;
   // Editing an existing value: focus the field, and Escape or Cancel leave without saving.
-  readonly edit?: { readonly cancelLabel: string; readonly onCancel: () => void };
+  readonly edit?: { readonly onCancel: () => void };
 };
 
 // One text field and its buttons: creating and editing a section title or an item text.
 // To clear it after a successful creation, the parent remounts it with a new `key`.
 export const TextForm = ({
   label,
-  submitLabel,
   invalidMessage,
   resolver,
   maxLength,
@@ -39,6 +38,7 @@ export const TextForm = ({
   focusOnMount = false,
   edit,
 }: TextFormProps) => {
+  const t = useTranslations("actions");
   const { register, handleSubmit, setFocus, formState } = useForm<TextFormValues>({
     resolver,
     defaultValues: { value: defaultValue },
@@ -68,12 +68,13 @@ export const TextForm = ({
           }}
           error={formState.errors.value === undefined ? undefined : invalidMessage}
         />
+        {/* Two uses so far: adding a new value, or saving an edited one. */}
         <Button type="submit" disabled={pending}>
-          {submitLabel}
+          {edit === undefined ? t("add") : t("save")}
         </Button>
         {edit === undefined ? null : (
           <Button variant="ghost" onClick={edit.onCancel}>
-            {edit.cancelLabel}
+            {t("cancel")}
           </Button>
         )}
       </Stack>
