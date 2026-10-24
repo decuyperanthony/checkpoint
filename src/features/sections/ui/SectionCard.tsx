@@ -4,16 +4,16 @@ import { ListChecksIcon, PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
-import { sectionTitleMaxLength, type Section } from "@/contract/schemas/Section";
+import type { Section } from "@/contract/schemas/Section";
 import { useRemoveSection, useRenameSection } from "@/features/sections/api/sections";
-import { titleResolver } from "@/features/sections/model/titleForm";
+import { useTitleField } from "@/features/sections/model/titleField";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Card } from "@/shared/ui/Card";
+import { EditForm } from "@/shared/ui/EditForm";
 import { IconButton } from "@/shared/ui/IconButton";
 import { IconTitle } from "@/shared/ui/IconTitle";
 import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
-import { TextForm } from "@/shared/ui/TextForm";
 
 type SectionCardProps = {
   readonly section: Section;
@@ -23,19 +23,18 @@ type SectionCardProps = {
 export const SectionCard = ({ section, children }: SectionCardProps) => {
   const t = useTranslations("sections");
   const { editing, triggerRef, open, close } = useInlineEdit();
+  const field = useTitleField();
   const rename = useRenameSection();
   const remove = useRemoveSection();
 
   const header = editing ? (
-    <TextForm
+    <EditForm
       label={t("title", { title: section.title })}
-      invalidMessage={t("titleInvalid", { max: sectionTitleMaxLength })}
-      resolver={titleResolver}
-      maxLength={sectionTitleMaxLength}
-      defaultValue={section.title}
+      field={field}
+      value={section.title}
       pending={rename.isPending}
-      onSubmit={(title) => rename.mutate({ id: section.id, title }, { onSuccess: close })}
-      edit={{ onCancel: close }}
+      onSave={(title) => rename.mutate({ id: section.id, title }, { onSuccess: close })}
+      onCancel={close}
     />
   ) : (
     <Stack direction="row" justify="between">

@@ -3,16 +3,16 @@
 import { PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { itemContentMaxLength, type Item } from "@/contract/schemas/Item";
+import type { Item } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
 import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
-import { contentResolver } from "@/features/items/model/contentForm";
+import { useContentField } from "@/features/items/model/contentField";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Checkbox } from "@/shared/ui/Checkbox";
+import { EditForm } from "@/shared/ui/EditForm";
 import { IconButton } from "@/shared/ui/IconButton";
 import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
-import { TextForm } from "@/shared/ui/TextForm";
 
 type ItemRowProps = {
   readonly item: Item;
@@ -24,20 +24,19 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
   const names = { content: item.content, section: sectionTitle };
   const t = useTranslations("items");
   const { editing, triggerRef, open, close } = useInlineEdit();
+  const field = useContentField();
   const update = useUpdateItem();
   const remove = useRemoveItem();
 
   if (editing) {
     return (
-      <TextForm
+      <EditForm
         label={t("content", names)}
-        invalidMessage={t("contentInvalid", { max: itemContentMaxLength })}
-        resolver={contentResolver}
-        maxLength={itemContentMaxLength}
-        defaultValue={item.content}
+        field={field}
+        value={item.content}
         pending={update.isPending}
-        onSubmit={(content) => update.mutate({ id: item.id, changes: { content } }, { onSuccess: close })}
-        edit={{ onCancel: close }}
+        onSave={(content) => update.mutate({ id: item.id, changes: { content } }, { onSuccess: close })}
+        onCancel={close}
       />
     );
   }
