@@ -1,4 +1,5 @@
-// Prints the argon2id hash of a PIN, to paste into `PIN_HASH` (.env.local, Vercel).
+// Prints the argon2id hash of a PIN for `PIN_HASH`: as is for Vercel, and as a line for
+// `.env.local`, where Next expands `$` unless it is escaped.
 // The PIN is typed twice, never echoed, and never leaves this process.
 //
 //   pnpm hash-pin
@@ -50,4 +51,6 @@ if ((await readHidden("Same PIN again: ")) !== pin) {
   process.exit(1);
 }
 
-console.log(await hash(pin));
+const pinHash = await hash(pin);
+console.log(`\nVercel (Settings → Environment Variables), value of PIN_HASH:\n${pinHash}`);
+console.log(`\n.env.local:\nPIN_HASH=${pinHash.replaceAll("$", "\\$")}`);
