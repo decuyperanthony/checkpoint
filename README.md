@@ -7,27 +7,32 @@ A single-page checklist: titled sections containing checkable items, behind a PI
 - **Next.js** (App Router, TypeScript strict), deployed on Vercel
 - **Effect 4** on the server: `HttpApi`, `Schema`, `Config`, services and Layers
 - **Neon Postgres** through **Drizzle**
-- **Tailwind CSS + shadcn/ui**, **TanStack Query**, **React Hook Form**
+- **Tailwind CSS + shadcn/ui**, **TanStack Query**, **React Hook Form** behind a small form kit, **next-intl**
 - **oxlint + oxfmt**, **Vitest**
 
 ## Architecture
 
 ```
 src/
-  app/            Next routes only — thin, no logic
+  app/            Next routes only: compose screens, no logic
   contract/       Shared by front and back: schemas, errors, HttpApi definition
   server/
-    services/     Business logic, depends on repository interfaces only
-    repositories/ Database access, provided by Layers (Drizzle, or in-memory in tests)
-    infra/        Config, database Layer, logger
+    services/     Business logic, on repository interfaces only
+    repositories/ Storage, provided by Layers (Drizzle, or in-memory in tests)
+    infra/        Config, database, query helpers
     handlers/     HttpApi implementation
-  features/       sections, items, auth — each with ui/, api/ (query hooks), model/
+  features/       sections, items: api/ (query hooks) and ui/
   shared/
     ui/           Design system; shadcn atoms in ui/primitives are private to it
-    lib/          API client, query client, utilities
+    form/         createForm, the form kit typed by its schema
+    lib/          API client, query helpers, small hooks
+    i18n/         Messages (French) and next-intl setup
+    testing/      Render helpers and fixtures for UI tests
 ```
 
 Boundaries are enforced by the linter (`oxlint.config.ts`): a feature never imports another feature, services never touch the database directly, and UI components never use Effect.
+
+**How the code is written, and why: [docs/best-practices.md](docs/best-practices.md).**
 
 ## Getting started
 
