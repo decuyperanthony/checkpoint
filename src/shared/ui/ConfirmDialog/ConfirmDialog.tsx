@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { ReactElement } from "react";
+import type { RefObject } from "react";
 
 import {
   AlertDialog,
@@ -12,12 +12,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/shared/ui/primitives/alert-dialog";
 
 type ConfirmDialogProps = {
-  // The element that opens the dialog, usually a button.
-  trigger: ReactElement;
+  // Opened by its owner, e.g. from a menu: the dialog has no button of its own.
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  // Where keyboard focus goes back once closed, usually the menu that opened it: the menu item
+  // itself is gone by then.
+  returnFocusTo?: RefObject<HTMLElement | null>;
   title: string;
   description: string;
   confirmLabel: string;
@@ -27,7 +30,9 @@ type ConfirmDialogProps = {
 
 // A modal that asks before an action: only confirming runs it, Cancel or Escape close it.
 export const ConfirmDialog = ({
-  trigger,
+  open,
+  onOpenChange,
+  returnFocusTo,
   title,
   description,
   confirmLabel,
@@ -37,9 +42,15 @@ export const ConfirmDialog = ({
   const t = useTranslations("actions");
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent
+        onCloseAutoFocus={(event) => {
+          const target = returnFocusTo?.current;
+          if (!target) return;
+          event.preventDefault();
+          target.focus();
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

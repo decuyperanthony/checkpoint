@@ -1,16 +1,17 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 import type { Item } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
-import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
+import { useCheckItem, useRemoveItem } from "@/features/items/api/items";
 import { EditItemForm } from "@/features/items/ui/EditItemForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
+import { ActionsMenu } from "@/shared/ui/ActionsMenu";
 import { Checkbox } from "@/shared/ui/Checkbox";
-import { IconButton } from "@/shared/ui/IconButton";
-import { RemoveButton } from "@/shared/ui/RemoveButton";
+import { RemoveDialog } from "@/shared/ui/RemoveDialog";
 import { Stack } from "@/shared/ui/Stack";
 
 type ItemRowProps = {
@@ -20,10 +21,10 @@ type ItemRowProps = {
 };
 
 export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
-  const names = { content: item.content, section: sectionTitle };
-  const t = useTranslations("items");
+  const t = useTranslations();
   const { editing, triggerRef, open, close } = useInlineEdit();
-  const update = useUpdateItem();
+  const [removing, setRemoving] = useState(false);
+  const { done, check } = useCheckItem(item);
   const remove = useRemoveItem();
 
   if (editing) {
@@ -32,23 +33,24 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
 
   return (
     <Stack direction="row" justify="between">
-      <Checkbox
-        label={item.content}
-        checked={item.done}
-        checkedStyle="strikethrough"
-        pending={update.isPending}
-        onCheckedChange={(done) => update.mutate({ id: item.id, changes: { done } })}
+      <Checkbox label={item.content} checked={done} checkedStyle="strikethrough" onCheckedChange={check} />
+      <ActionsMenu label={t("items.menu", { content: item.content, section: sectionTitle })} triggerRef={triggerRef}>
+        <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
+          {t("actions.edit")}
+        </ActionsMenu.Item>
+        <ActionsMenu.Separator />
+        <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
+          {t("actions.remove")}
+        </ActionsMenu.Item>
+      </ActionsMenu>
+      <RemoveDialog
+        name={item.content}
+        description={t("items.removeDescription")}
+        open={removing}
+        onOpenChange={setRemoving}
+        returnFocusTo={triggerRef}
+        onConfirm={() => remove.mutate(item.id)}
       />
-      <Stack direction="row" gap="sm">
-        <IconButton ref={triggerRef} icon={PencilIcon} label={t("edit", names)} onClick={open} />
-        <RemoveButton
-          name={item.content}
-          label={t("remove", names)}
-          description={t("removeDescription")}
-          disabled={remove.isPending}
-          onConfirm={() => remove.mutate(item.id)}
-        />
-      </Stack>
     </Stack>
   );
 };

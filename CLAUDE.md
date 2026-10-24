@@ -2,22 +2,27 @@
 
 Single-page checklist (sections of checkable items) behind a PIN. Next.js App Router + Effect 4 on the server, Neon Postgres via Drizzle.
 
+**Read [docs/best-practices.md](docs/best-practices.md) before writing code**: it holds the conventions, the reasons and an example file for each. This file only lists what is easy to get wrong.
+
 ## Commands
 
-`pnpm dev` · `pnpm typecheck` · `pnpm lint` · `pnpm format` · `pnpm test` — all four checks must pass before a PR.
+`pnpm dev` · `pnpm typecheck` · `pnpm lint` · `pnpm format` · `pnpm format:check` · `pnpm test` · `pnpm build`
 
-## Rules specific to this repo
+All four checks (typecheck, lint, format:check, test) pass on **every commit** of a PR. Judge them by exit code, never by grepping their output: oxlint error lines carry no marker you can rely on.
 
-- **Effect Schema is the only schema library.** No Zod. API contract, errors, config and forms all use it. Types are derived from schemas, never rewritten.
-- Effect 4: `HttpApi` comes from `effect/http-api`, not `@effect/platform` (v3 only). Follow the official docs.
-- No `Record<…>` (lint): use literal-key unions with mapped types, or schema-derived types.
-- Environment variables are read only through `Config` in `src/server/infra/`.
-- shadcn atoms live in `src/shared/ui/primitives` and are imported only inside `src/shared/ui`.
-- Styling uses design tokens only: no raw colours (`bg-white`, `text-black`, palette shades), no arbitrary values.
-- Every user-facing string goes through i18n messages. Light and dark themes are both supported.
-- Boundaries (enforced by `oxlint.config.ts`): feature ↛ feature, service ↛ Drizzle, no Effect in UI components, no `../` imports in features and services. Repo-specific rules live in `lint/checkpoint-plugin.ts`.
-- Tests cover behaviour only (services on in-memory Layers, screens by role and text). No snapshots.
+## Easy to get wrong
+
+- **Effect Schema only, no Zod.** Types are derived from schemas, never rewritten.
+- **Effect 4**: `HttpApi` from `effect/http-api`, `HttpRouter` from `effect/http`. `@effect/platform` and `@effect/sql-drizzle` are Effect 3 only. Check APIs in `node_modules/effect/dist/**/*.d.ts`, not from memory.
+- **No `any`, `as` (except `as const`), `!`, `@ts-ignore`, `Record<…>`, `interface`, `function`.** Lint fails on each.
+- **No `readonly` on front-end types**; contract and server types keep it.
+- **No `useEffect`** to sync state or move focus, **no render props**: see the React section of the best practices.
+- **Forms go through `createForm`** (`@/shared/form`); React Hook Form is imported nowhere else (lint).
+- **Design tokens only**, variants with cva typed by `tokens.ts`. One folder per component with `index.ts`, and a test when it has behaviour.
+- **Every user-facing string in `src/shared/i18n/messages/fr.json`.** Both themes must work.
+- **Environment variables only through `Config`** in `src/server/infra/`. Never print `DATABASE_URL` or any secret; never commit `.env*`.
+- **Tests cover behaviour**: services on in-memory Layers, screens on `fakeApi` by role and name. Never test a library. A new test must fail without the code it covers.
 
 ## PR workflow
 
-Stacked PRs, each branched from the previous one, ~400 lines max excluding lockfile and generated files. Fill in `.github/pull_request_template.md`.
+Stacked PRs, each branched from the previous one, ~400 lines max excluding lockfile and generated files. Conventional commits in English. Fill in `.github/pull_request_template.md`. The owner squash-merges and may rebase the stack: `git fetch` and compare with `origin/<branch>` before touching a branch.

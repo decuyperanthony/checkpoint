@@ -21,19 +21,9 @@ type CheckboxProps = VariantProps<typeof labelStyle> & {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
-  // While a change is being saved: further changes are ignored, but unlike `disabled` the
-  // checkbox keeps keyboard focus.
-  pending?: boolean;
 };
 
-export const Checkbox = ({
-  label,
-  checked,
-  onCheckedChange,
-  checkedStyle,
-  disabled = false,
-  pending = false,
-}: CheckboxProps) => {
+export const Checkbox = ({ label, checked, onCheckedChange, checkedStyle, disabled = false }: CheckboxProps) => {
   const id = useId();
 
   return (
@@ -42,10 +32,7 @@ export const Checkbox = ({
         id={id}
         checked={checked}
         disabled={disabled}
-        aria-disabled={pending}
-        onCheckedChange={(state) => {
-          if (!pending) onCheckedChange(state === true);
-        }}
+        onCheckedChange={(state) => onCheckedChange(state === true)}
       />
       <Label htmlFor={id} className={labelStyle({ checkedStyle })}>
         {label}
