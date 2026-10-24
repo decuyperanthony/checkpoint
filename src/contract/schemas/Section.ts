@@ -12,6 +12,5 @@ export const Section = Schema.Struct({
 });
 export type Section = typeof Section.Type;
 
-export const CreateSectionPayload = Schema.Struct({ title: SectionTitle });
-
-export const RenameSectionPayload = Schema.Struct({ title: SectionTitle });
+// Creating and renaming both carry only a title.
+export const SectionTitlePayload = Schema.Struct({ title: SectionTitle });

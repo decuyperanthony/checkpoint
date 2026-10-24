@@ -9,6 +9,7 @@ import { SectionRepository } from "./SectionRepository";
 const byPosition = Order.mapInput(Order.Number, (section: Section) => section.position);
 
 // In-memory implementation for tests: same contract as the Drizzle one, no database.
+// `toSorted` is stable, so equal positions keep insertion order, like the Drizzle tiebreaker.
 export const SectionRepositoryMemory = Layer.effect(
   SectionRepository,
   Effect.gen(function* () {
@@ -17,7 +18,12 @@ export const SectionRepositoryMemory = Layer.effect(
     return SectionRepository.of({
       list: Ref.get(sections).pipe(Effect.map((all) => all.toSorted(byPosition))),
       lastPosition: Ref.get(sections).pipe(
-        Effect.map((all) => Array.last(all.toSorted(byPosition)).pipe(Option.map((s) => s.position))),
+        Effect.map((all) =>
+          Array.match(all, {
+            onEmpty: Option.none,
+            onNonEmpty: (some) => Option.some(Math.max(...some.map((s) => s.position))),
+          }),
+        ),
       ),
       insert: (draft) =>
         Effect.gen(function* () {

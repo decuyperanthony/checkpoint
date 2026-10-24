@@ -24,7 +24,7 @@ export const SectionRepositoryDrizzle = Layer.effect(
     const query = makeQuery(yield* Db);
 
     return SectionRepository.of({
-      list: query((db) => db.select(columns).from(section).orderBy(asc(section.position))).pipe(
+      list: query((db) => db.select(columns).from(section).orderBy(asc(section.position), asc(section.createdAt))).pipe(
         Effect.flatMap(decodeRows(Section)),
       ),
       lastPosition: query((db) => db.select({ last: max(section.position) }).from(section)).pipe(

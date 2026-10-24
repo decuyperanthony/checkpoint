@@ -12,5 +12,5 @@ const RepositoriesLive = SectionRepositoryDrizzle.pipe(Layer.provide(DbLive), La
 // every request fails with that error and it is logged with its explicit message.
 const { handler } = HttpRouter.toWebHandler(ApiLive.pipe(Layer.provide(RepositoriesLive)));
 
-// Next passes route context as a second argument, which must not reach Effect.
+// Next route handlers receive `(request, context)`: this keeps the exported signature to `(request)`.
 export const handleApiRequest = (request: Request) => handler(request);
