@@ -9,15 +9,16 @@ import { nextPosition } from "@/server/services/positions";
 
 const notFound = (id: ItemId) => Effect.fromOption(() => new ItemNotFound({ id }));
 
-const make = Effect.gen(function* () {
-  const items = yield* ItemRepository;
-  const sections = yield* SectionRepository;
+// Same shape as SectionService: `make` inferred, one span per operation.
+export class ItemService extends Context.Service<ItemService>()("checkpoint/ItemService", {
+  make: Effect.gen(function* () {
+    const items = yield* ItemRepository;
+    const sections = yield* SectionRepository;
 
-  return {
-    list: items.list,
+    return {
+      list: items.list.pipe(Effect.withSpan("ItemService.list")),
 
-    create: ({ sectionId, content }: Pick<Item, "sectionId" | "content">) =>
-      Effect.gen(function* () {
+      create: Effect.fn("ItemService.create")(function* ({ sectionId, content }: Pick<Item, "sectionId" | "content">) {
         if (!(yield* sections.exists(sectionId))) {
           return yield* new SectionNotFound({ id: sectionId });
         }
@@ -25,14 +26,15 @@ const make = Effect.gen(function* () {
         return yield* items.insert({ sectionId, content, position });
       }),
 
-    update: ({ id, changes }: ItemUpdate) => items.update({ id, changes }).pipe(Effect.flatMap(notFound(id))),
+      update: Effect.fn("ItemService.update")(function* ({ id, changes }: ItemUpdate) {
+        return yield* items.update({ id, changes }).pipe(Effect.flatMap(notFound(id)));
+      }),
 
-    remove: (id: ItemId) => items.delete(id).pipe(Effect.flatMap(notFound(id)), Effect.asVoid),
-  };
-});
-
-export class ItemService extends Context.Service<ItemService, Effect.Success<typeof make>>()(
-  "checkpoint/ItemService",
-) {}
-
-export const ItemServiceLive = Layer.effect(ItemService, make);
+      remove: Effect.fn("ItemService.remove")(function* (id: ItemId) {
+        yield* items.delete(id).pipe(Effect.flatMap(notFound(id)));
+      }),
+    };
+  }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}

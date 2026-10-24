@@ -7,7 +7,7 @@ import { Section } from "@/contract/schemas/Section";
 import { ApiHandlers } from "@/server/http";
 import type { ItemRepository } from "@/server/repositories/ItemRepository";
 import { ItemRepositoryMemory } from "@/server/repositories/ItemRepositoryMemory";
-import { MemoryStoreLive } from "@/server/repositories/MemoryStore";
+import { MemoryStore } from "@/server/repositories/MemoryStore";
 import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
@@ -80,7 +80,7 @@ describe("sections API", () => {
         const memory = yield* SectionRepository;
         return { ...memory, list: Effect.die(new Error("connection to db.internal refused")) };
       }),
-    ).pipe(Layer.provide(SectionRepositoryMemory), Layer.merge(ItemRepositoryMemory), Layer.provide(MemoryStoreLive));
+    ).pipe(Layer.provide(SectionRepositoryMemory), Layer.merge(ItemRepositoryMemory), Layer.provide(MemoryStore.layer));
     app = makeApp(failingDatabase);
 
     const response = await send("GET", "/sections");

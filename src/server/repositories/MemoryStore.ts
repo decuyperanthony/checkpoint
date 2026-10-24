@@ -10,6 +10,8 @@ type Tables = {
 
 // One store shared by the in-memory repositories, so they behave like a single database
 // (deleting a section deletes its items, like ON DELETE CASCADE).
-export class MemoryStore extends Context.Service<MemoryStore, Ref.Ref<Tables>>()("checkpoint/MemoryStore") {}
-
-export const MemoryStoreLive = Layer.effect(MemoryStore, Ref.make<Tables>({ sections: [], items: [] }));
+export class MemoryStore extends Context.Service<MemoryStore>()("checkpoint/MemoryStore", {
+  make: Ref.make<Tables>({ sections: [], items: [] }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}
