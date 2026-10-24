@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 type ScreenProps = {
   readonly title: ReactNode;
   readonly actions?: ReactNode;
-  readonly children: ReactNode;
+  readonly children?: ReactNode;
 };
 
 export const Screen = ({ title, actions, children }: ScreenProps) => (
