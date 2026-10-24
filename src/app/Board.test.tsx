@@ -13,7 +13,19 @@ vi.stubGlobal("fetch", fetchSpy);
 
 // Reset before each test, not after: a refetch still in flight from the previous screen
 // must not hit a disposed store.
-beforeEach(() => fakeApi.reset());
+beforeEach(() => {
+  fakeApi.reset();
+  fetchSpy.mockImplementation(fakeApi.fetch);
+});
+
+// Answers the next update (PATCH) with `answer`; `send` forwards it to the API.
+const onNextUpdate = (answer: (send: () => Promise<Response>) => Promise<Response>) =>
+  fetchSpy.mockImplementation((input, init) => {
+    const method = init?.method ?? (input instanceof Request ? input.method : "GET");
+    if (method.toUpperCase() !== "PATCH") return fakeApi.fetch(input, init);
+    fetchSpy.mockImplementation(fakeApi.fetch);
+    return answer(() => fakeApi.fetch(input, init));
+  });
 
 const addSection = async (title: string) => {
   await userEvent.type(await screen.findByRole("textbox", { name: "Nouvelle section" }), `${title}{Enter}`);
@@ -114,16 +126,30 @@ describe("Board items", () => {
     expect(screen.getByRole("button", { name: "Modifier l'élément Lait dans Travail" })).toBeInTheDocument();
   });
 
-  it("checks an item, then unchecks it", async () => {
+  it("checks an item at once, before the API answers, then unchecks it", async () => {
     renderScreen(<Board />);
     await addSection("Courses");
     const item = await addItem("Courses", "Lait");
+    const { promise: answered, resolve: answer } = Promise.withResolvers<void>();
+    onNextUpdate((send) => answered.then(send));
 
     await userEvent.click(item);
-    await vi.waitFor(() => expect(screen.getByRole("checkbox", { name: "Lait" })).toBeChecked());
-    await vi.waitFor(() => expect(screen.getByRole("checkbox", { name: "Lait" })).toBeEnabled());
+    expect(screen.getByRole("checkbox", { name: "Lait" })).toBeChecked();
+    answer();
 
     await userEvent.click(screen.getByRole("checkbox", { name: "Lait" }));
+    await vi.waitFor(() => expect(screen.getByRole("checkbox", { name: "Lait" })).not.toBeChecked());
+  });
+
+  it("unchecks the box again and says so when checking fails", async () => {
+    renderScreen(<Board />);
+    await addSection("Courses");
+    const item = await addItem("Courses", "Lait");
+    onNextUpdate(() => Promise.resolve(new Response(null, { status: 500 })));
+
+    await userEvent.click(item);
+
+    expect(await screen.findByText("Une erreur est survenue. Réessaie dans un instant.")).toBeInTheDocument();
     await vi.waitFor(() => expect(screen.getByRole("checkbox", { name: "Lait" })).not.toBeChecked());
   });
 
