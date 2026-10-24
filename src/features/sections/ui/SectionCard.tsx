@@ -2,12 +2,12 @@
 
 import { ListChecksIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { sectionTitleMaxLength, type Section } from "@/contract/schemas/Section";
 import { useRemoveSection, useRenameSection } from "@/features/sections/api/sections";
 import { titleResolver } from "@/features/sections/model/titleForm";
-import { useReturnFocus } from "@/shared/lib/useReturnFocus";
+import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Card } from "@/shared/ui/Card";
 import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
@@ -22,11 +22,9 @@ type SectionCardProps = {
 
 export const SectionCard = ({ section, children }: SectionCardProps) => {
   const t = useTranslations("sections");
-  const [editing, setEditing] = useState(false);
+  const { editing, triggerRef, open, close } = useInlineEdit();
   const rename = useRenameSection();
   const remove = useRemoveSection();
-
-  const renameButton = useReturnFocus<HTMLButtonElement>(editing);
 
   const header = editing ? (
     <TextForm
@@ -36,19 +34,14 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
       maxLength={sectionTitleMaxLength}
       defaultValue={section.title}
       pending={rename.isPending}
-      onSubmit={(title) => rename.mutate({ id: section.id, title }, { onSuccess: () => setEditing(false) })}
-      edit={{ onCancel: () => setEditing(false) }}
+      onSubmit={(title) => rename.mutate({ id: section.id, title }, { onSuccess: close })}
+      edit={{ onCancel: close }}
     />
   ) : (
     <Stack direction="row" justify="between">
       <IconTitle icon={ListChecksIcon}>{section.title}</IconTitle>
       <Stack direction="row" gap="sm">
-        <IconButton
-          ref={renameButton}
-          icon={PencilIcon}
-          label={t("rename", { title: section.title })}
-          onClick={() => setEditing(true)}
-        />
+        <IconButton ref={triggerRef} icon={PencilIcon} label={t("rename", { title: section.title })} onClick={open} />
         <ConfirmRemoveButton
           icon={Trash2Icon}
           label={t("remove", { title: section.title })}

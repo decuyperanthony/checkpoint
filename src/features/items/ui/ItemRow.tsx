@@ -2,13 +2,12 @@
 
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 
 import { itemContentMaxLength, type Item } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
 import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
 import { contentResolver } from "@/features/items/model/contentForm";
-import { useReturnFocus } from "@/shared/lib/useReturnFocus";
+import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Checkbox } from "@/shared/ui/Checkbox";
 import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
@@ -24,10 +23,9 @@ type ItemRowProps = {
 export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
   const names = { content: item.content, section: sectionTitle };
   const t = useTranslations("items");
-  const [editing, setEditing] = useState(false);
+  const { editing, triggerRef, open, close } = useInlineEdit();
   const update = useUpdateItem();
   const remove = useRemoveItem();
-  const editButton = useReturnFocus<HTMLButtonElement>(editing);
 
   if (editing) {
     return (
@@ -38,10 +36,8 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
         maxLength={itemContentMaxLength}
         defaultValue={item.content}
         pending={update.isPending}
-        onSubmit={(content) =>
-          update.mutate({ id: item.id, changes: { content } }, { onSuccess: () => setEditing(false) })
-        }
-        edit={{ onCancel: () => setEditing(false) }}
+        onSubmit={(content) => update.mutate({ id: item.id, changes: { content } }, { onSuccess: close })}
+        edit={{ onCancel: close }}
       />
     );
   }
@@ -56,7 +52,7 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
         onCheckedChange={(done) => update.mutate({ id: item.id, changes: { done } })}
       />
       <Stack direction="row" gap="sm">
-        <IconButton ref={editButton} icon={PencilIcon} label={t("edit", names)} onClick={() => setEditing(true)} />
+        <IconButton ref={triggerRef} icon={PencilIcon} label={t("edit", names)} onClick={open} />
         <ConfirmRemoveButton
           icon={Trash2Icon}
           label={t("remove", names)}
