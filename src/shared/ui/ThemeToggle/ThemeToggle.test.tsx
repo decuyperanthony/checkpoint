@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import messages from "@/shared/i18n/messages/fr.json";
 
-import { ThemeProvider } from "./ThemeProvider";
+import { ThemeProvider } from "@/shared/ui/ThemeProvider";
 import { ThemeToggle } from "./ThemeToggle";
 
 const renderToggle = () =>
