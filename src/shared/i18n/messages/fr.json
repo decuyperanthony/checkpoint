@@ -1,0 +1,9 @@
+{
+  "app": {
+    "title": "Checkpoint",
+    "description": "Une checklist unique, organisée en sections."
+  },
+  "theme": {
+    "toggle": "Basculer entre thème clair et sombre"
+  }
+}

@@ -78,11 +78,28 @@ export default defineConfig({
   overrides: [
     { files: ["src/app/**/*.tsx"], rules: restrictImports(shadcnAtoms, effectRuntime) },
     { files: ["src/**/*.{ts,tsx}"], rules: { "checkpoint/design-tokens": "error" } },
+    {
+      files: ["src/**/*.tsx"],
+      rules: {
+        // User-facing text goes through i18n messages, never JSX literals.
+        "react/jsx-no-literals": [
+          "error",
+          {
+            noStrings: true,
+            ignoreProps: true,
+            restrictedAttributes: ["aria-label", "aria-description", "alt", "title", "placeholder", "label"],
+          },
+        ],
+      },
+    },
+    { files: ["src/**/*.test.tsx"], rules: { "react/jsx-no-literals": "off" } },
+    // next-intl is typed through module augmentation, which requires an interface.
+    { files: ["src/shared/i18n/next-intl.d.ts"], rules: { "typescript/consistent-type-definitions": "off" } },
     { files: ["src/shared/ui/**"], rules: restrictImports(effectRuntime) },
     // shadcn atoms are vendored as generated, so they can be updated with the shadcn CLI.
     {
       files: ["src/shared/ui/primitives/**"],
-      rules: { "checkpoint/arrow-functions": "off", "checkpoint/design-tokens": "off" },
+      rules: { "checkpoint/arrow-functions": "off", "checkpoint/design-tokens": "off", "react/jsx-no-literals": "off" },
     },
     ...features.flatMap((feature) => [
       {

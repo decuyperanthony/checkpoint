@@ -1,27 +1,38 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
-import { Geist } from "next/font/google";
-
 import { cn } from "@/shared/lib/cn";
+import { ThemeProvider } from "@/shared/ui/ThemeProvider";
 
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata: Metadata = {
-  title: "checkpoint",
-  description: "A single-page checklist, organised in sections.",
+export const generateMetadata = async (): Promise<Metadata> => {
+  const t = await getTranslations("app");
+  return { title: t("title"), description: t("description") };
 };
 
 type RootLayoutProps = {
   readonly children: ReactNode;
 };
 
-const RootLayout = ({ children }: RootLayoutProps) => (
-  <html lang="fr" className={cn("font-sans", geist.variable)}>
-    <body>{children}</body>
-  </html>
-);
+const RootLayout = async ({ children }: RootLayoutProps) => {
+  const locale = await getLocale();
+
+  return (
+    // next-themes sets the theme class before hydration, which React would otherwise report.
+    <html lang={locale} className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+      <body>
+        <NextIntlClientProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+};
 
 export default RootLayout;
