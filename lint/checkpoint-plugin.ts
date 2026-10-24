@@ -1,4 +1,4 @@
-import { definePlugin, defineRule } from "@oxlint/plugins";
+import { definePlugin, defineRule, type Ranged } from "@oxlint/plugins";
 
 // Generators have no arrow form, and methods (class members, object shorthand) are not
 // standalone functions, so both stay allowed.
@@ -21,7 +21,50 @@ const arrowFunctions = defineRule({
   }),
 });
 
+const paletteColor =
+  /^-?(?:bg|text|border(?:-[trblxyse])?|ring(?:-offset)?|outline|fill|stroke|from|via|to|decoration|shadow|accent|caret|divide|placeholder)-(?:white|black|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3})(?:\/\d+)?$/;
+
+// `hover:bg-[#fff]` → `bg-[#fff]`. Variants may contain brackets themselves (`data-[state=open]:`).
+const variantPrefix = /^(?:[^\s:[]*(?:\[[^\]]*\])?[^\s:[]*:)+/;
+
+const hardCodedStyle = (className: string) => {
+  const utility = className.replace(variantPrefix, "").replace(/^!/, "");
+  if (paletteColor.test(utility)) return `"${className}" uses a raw palette colour`;
+  if (/[[(]/.test(utility)) return `"${className}" uses an arbitrary value`;
+  return undefined;
+};
+
+const designTokens = defineRule({
+  meta: {
+    type: "problem",
+    docs: { description: "Style with design tokens only: no palette colours, arbitrary values or inline styles." },
+    messages: {
+      hardCoded: "{{reason}}: use a design token instead.",
+      inlineStyle: "Inline styles bypass the design tokens: use a design-system component or token class.",
+    },
+  },
+  create: (context) => {
+    const checkClasses = (node: Ranged, text: string) => {
+      for (const className of text.split(/\s+/)) {
+        const reason = hardCodedStyle(className);
+        if (reason !== undefined) context.report({ node, messageId: "hardCoded", data: { reason } });
+      }
+    };
+    return {
+      Literal: (node) => {
+        if (typeof node.value === "string") checkClasses(node, node.value);
+      },
+      TemplateElement: (node) => checkClasses(node, node.value.cooked ?? node.value.raw),
+      JSXAttribute: (node) => {
+        if (node.name.type === "JSXIdentifier" && node.name.name === "style") {
+          context.report({ node, messageId: "inlineStyle" });
+        }
+      },
+    };
+  },
+});
+
 export default definePlugin({
   meta: { name: "checkpoint" },
-  rules: { "arrow-functions": arrowFunctions },
+  rules: { "arrow-functions": arrowFunctions, "design-tokens": designTokens },
 });

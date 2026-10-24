@@ -77,9 +77,13 @@ export default defineConfig({
   },
   overrides: [
     { files: ["src/app/**/*.tsx"], rules: restrictImports(shadcnAtoms, effectRuntime) },
+    { files: ["src/**/*.tsx", "src/shared/ui/**"], rules: { "checkpoint/design-tokens": "error" } },
     { files: ["src/shared/ui/**"], rules: restrictImports(effectRuntime) },
     // shadcn atoms are vendored as generated, so they can be updated with the shadcn CLI.
-    { files: ["src/shared/ui/primitives/**"], rules: { "checkpoint/arrow-functions": "off" } },
+    {
+      files: ["src/shared/ui/primitives/**"],
+      rules: { "checkpoint/arrow-functions": "off", "checkpoint/design-tokens": "off" },
+    },
     ...features.flatMap((feature) => [
       {
         files: [`src/features/${feature}/**`],
