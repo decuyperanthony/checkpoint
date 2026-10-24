@@ -27,7 +27,7 @@
     "title": "Titre de la section {title}",
     "rename": "Renommer la section {title}",
     "remove": "Supprimer la section {title}",
-    "titleInvalid": "Le titre doit faire entre 1 et 200 caractères.",
+    "titleInvalid": "Le titre doit faire entre 1 et {max} caractères.",
     "removeTitle": "Supprimer « {title} » ?",
     "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
   },

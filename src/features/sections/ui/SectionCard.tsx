@@ -31,7 +31,7 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
   const header = editing ? (
     <TextForm
       label={t("title", { title: section.title })}
-      invalidMessage={t("titleInvalid")}
+      invalidMessage={t("titleInvalid", { max: sectionTitleMaxLength })}
       resolver={titleResolver}
       maxLength={sectionTitleMaxLength}
       defaultValue={section.title}
