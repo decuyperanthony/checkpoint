@@ -74,7 +74,7 @@ describe("Board sections", () => {
 
     await userEvent.type(screen.getByRole("textbox", { name: "Nouvelle section" }), "   {Enter}");
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Le titre doit faire entre 1 et 200 caractères.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Ce champ est obligatoire.");
     expect(fetchSpy.mock.calls.length).toBe(calls);
   });
 
@@ -149,7 +149,7 @@ describe("Board items", () => {
 
     await userEvent.type(screen.getByRole("textbox", { name: "Nouvel élément dans Courses" }), "   {Enter}");
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Le texte doit faire entre 1 et 500 caractères.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Ce champ est obligatoire.");
     expect(fetchSpy.mock.calls.length).toBe(calls);
   });
 
