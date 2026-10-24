@@ -1,19 +1,15 @@
-import { useMutation, useQueryClient, useSuspenseQuery, type QueryKey } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 
 import type { Section } from "@/contract/schemas/Section";
 import { callApi } from "@/shared/lib/api";
 import { queryKeys } from "@/shared/lib/queryKeys";
+import { useInvalidate } from "@/shared/lib/useInvalidate";
 
 export const useSections = () =>
   useSuspenseQuery({
     queryKey: queryKeys.sections,
     queryFn: ({ signal }) => callApi((api) => api.sections.list(), { signal }),
   });
-
-const useInvalidate = (...keys: ReadonlyArray<QueryKey>) => {
-  const queryClient = useQueryClient();
-  return () => Promise.all(keys.map((queryKey) => queryClient.invalidateQueries({ queryKey })));
-};
 
 export const useCreateSection = () => {
   const invalidate = useInvalidate(queryKeys.sections);
