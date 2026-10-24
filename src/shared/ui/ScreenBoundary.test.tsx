@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it, vi } from "vitest";
 
 import messages from "@/shared/i18n/messages/fr.json";
-import { sectionNotFound } from "@/shared/lib/testing";
+import { sectionNotFound } from "@/shared/lib/fixtures";
 
 import { ScreenBoundary } from "./ScreenBoundary";
 

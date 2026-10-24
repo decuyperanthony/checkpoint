@@ -5,7 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { cn } from "@/shared/lib/cn";
-import { QueryProvider } from "@/shared/lib/QueryProvider";
+import { QueryProvider } from "@/shared/ui/QueryProvider";
 import { ThemeProvider } from "@/shared/ui/ThemeProvider";
 import { Toaster } from "@/shared/ui/Toaster";
 
