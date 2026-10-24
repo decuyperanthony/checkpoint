@@ -9,7 +9,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
   test: {
-    passWithNoTests: true,
     projects: [
       {
         extends: true,
@@ -19,7 +18,8 @@ export default defineConfig({
         extends: true,
         test: {
           name: "ui",
-          include: ["src/{features,shared}/**/*.test.{ts,tsx}"],
+          include: ["src/**/*.test.{ts,tsx}"],
+          exclude: ["src/server/**"],
           environment: "jsdom",
           setupFiles: ["./vitest.setup.ts"],
         },
