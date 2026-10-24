@@ -1,0 +1,107 @@
+import { Effect, Layer, Schema } from "effect";
+import { describe, expect, it } from "vitest";
+
+import { ItemNotFound } from "@/contract/errors/ItemNotFound";
+import { SectionNotFound } from "@/contract/errors/SectionNotFound";
+import { ItemId } from "@/contract/schemas/Item";
+import { SectionId } from "@/contract/schemas/Section";
+import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
+
+import { ItemService, ItemServiceLive } from "./ItemService";
+import { SectionService } from "./SectionService";
+
+const run = <A, E>(program: Effect.Effect<A, E, ItemService | SectionService>) =>
+  Effect.runPromise(
+    program.pipe(
+      Effect.provide(Layer.mergeAll(ItemServiceLive, SectionService.layer).pipe(Layer.provide(RepositoriesMemory))),
+    ),
+  );
+
+// A section with two items, "Lait" then "Pain".
+const groceries = Effect.gen(function* () {
+  const sections = yield* SectionService;
+  const items = yield* ItemService;
+  const section = yield* sections.create("Courses");
+  const milk = yield* items.create({ sectionId: section.id, content: "Lait" });
+  const bread = yield* items.create({ sectionId: section.id, content: "Pain" });
+  return { section, milk, bread };
+});
+
+describe("ItemService", () => {
+  it("appends new items, unchecked, at the end of their own section", async () => {
+    const { milk, bread, other } = await run(
+      Effect.gen(function* () {
+        const created = yield* groceries;
+        const work = yield* (yield* SectionService).create("Travail");
+        const report = yield* (yield* ItemService).create({ sectionId: work.id, content: "Rapport" });
+        return { ...created, other: report };
+      }),
+    );
+
+    expect([milk.position, bread.position, other.position]).toEqual([0, 1, 0]);
+    expect([milk.done, bread.done]).toEqual([false, false]);
+  });
+
+  it("refuses an item in an unknown section", async () => {
+    const unknown = Schema.decodeSync(SectionId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
+
+    const error = await run(
+      ItemService.use((items) => Effect.flip(items.create({ sectionId: unknown, content: "Lait" }))),
+    );
+
+    expect(error).toBeInstanceOf(SectionNotFound);
+  });
+
+  it("checks an item without touching its text, then edits its text without unchecking it", async () => {
+    const item = await run(
+      Effect.gen(function* () {
+        const items = yield* ItemService;
+        const { milk } = yield* groceries;
+        yield* items.update({ id: milk.id, changes: { done: true } });
+        return yield* items.update({ id: milk.id, changes: { content: "Lait d'avoine" } });
+      }),
+    );
+
+    expect(item).toMatchObject({ content: "Lait d'avoine", done: true });
+  });
+
+  it("removes an item", async () => {
+    const remaining = await run(
+      Effect.gen(function* () {
+        const items = yield* ItemService;
+        const { milk } = yield* groceries;
+        yield* items.remove(milk.id);
+        return (yield* items.list).map((item) => item.content);
+      }),
+    );
+
+    expect(remaining).toEqual(["Pain"]);
+  });
+
+  it("removes the items of a removed section", async () => {
+    const remaining = await run(
+      Effect.gen(function* () {
+        const { section } = yield* groceries;
+        yield* (yield* SectionService).remove(section.id);
+        return yield* (yield* ItemService).list;
+      }),
+    );
+
+    expect(remaining).toEqual([]);
+  });
+
+  it("fails with ItemNotFound for an unknown item", async () => {
+    const unknown = Schema.decodeSync(ItemId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
+
+    const errors = await run(
+      ItemService.use((items) =>
+        Effect.all([
+          Effect.flip(items.update({ id: unknown, changes: { done: true } })),
+          Effect.flip(items.remove(unknown)),
+        ]),
+      ),
+    );
+
+    expect(errors).toEqual([expect.any(ItemNotFound), expect.any(ItemNotFound)]);
+  });
+});

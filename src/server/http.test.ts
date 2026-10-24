@@ -2,19 +2,24 @@ import { Effect, Layer, Schema } from "effect";
 import { HttpRouter } from "effect/http";
 import { afterEach, describe, expect, it } from "vitest";
 
+import { Item } from "@/contract/schemas/Item";
 import { Section } from "@/contract/schemas/Section";
 import { ApiHandlers } from "@/server/http";
+import type { ItemRepository } from "@/server/repositories/ItemRepository";
+import { ItemRepositoryMemory } from "@/server/repositories/ItemRepositoryMemory";
+import { MemoryStoreLive } from "@/server/repositories/MemoryStore";
+import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
 
-const makeApp = (repositories: Layer.Layer<SectionRepository>) =>
+const makeApp = (repositories: Layer.Layer<SectionRepository | ItemRepository>) =>
   HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide(repositories)), { disableLogger: true });
 
-let app = makeApp(SectionRepositoryMemory);
+let app = makeApp(RepositoriesMemory);
 
 afterEach(async () => {
   await app.dispose();
-  app = makeApp(SectionRepositoryMemory);
+  app = makeApp(RepositoriesMemory);
 });
 
 const send = (method: string, path: string, body?: unknown) =>
@@ -68,6 +73,22 @@ describe("sections API", () => {
     expect(list.map((section) => section.title)).toEqual(["Travail"]);
   });
 
+  it("creates an item in a section, then checks it", async () => {
+    const section = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
+    const created = await readJson(await send("POST", `/sections/${section.id}/items`, { content: " Lait " }), Item);
+
+    const response = await send("PATCH", `/items/${created.id}`, { done: true });
+
+    expect(response.status).toBe(200);
+    expect(await readJson(response, Item)).toMatchObject({ content: "Lait", done: true, sectionId: section.id });
+  });
+
+  it("rejects an item update that changes nothing", async () => {
+    const response = await send("PATCH", `/items/${unknownId}`, {});
+
+    expect(response.status).toBe(400);
+  });
+
   it("answers a database failure with an empty 500, without leaking the cause", async () => {
     await app.dispose();
     const failingDatabase = Layer.effect(
@@ -76,7 +97,7 @@ describe("sections API", () => {
         const memory = yield* SectionRepository;
         return { ...memory, list: Effect.die(new Error("connection to db.internal refused")) };
       }),
-    ).pipe(Layer.provide(SectionRepositoryMemory));
+    ).pipe(Layer.provide(SectionRepositoryMemory), Layer.merge(ItemRepositoryMemory), Layer.provide(MemoryStoreLive));
     app = makeApp(failingDatabase);
 
     const response = await send("GET", "/sections");

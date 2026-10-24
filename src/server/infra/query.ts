@@ -1,4 +1,4 @@
-import { Data, Effect } from "effect";
+import { Array, Data, Effect, Schema } from "effect";
 
 import type { Db } from "./Db";
 
@@ -12,3 +12,11 @@ export const makeQuery =
   (db: Database) =>
   <A>(run: (database: Database) => Promise<A>) =>
     Effect.tryPromise({ try: () => run(db), catch: (cause) => new DatabaseError({ cause }) }).pipe(Effect.orDie);
+
+// Rows are decoded rather than cast: a row that no longer matches the contract is a defect.
+export const decodeRows =
+  <S extends Schema.Top>(schema: S) =>
+  (rows: ReadonlyArray<unknown>) =>
+    Schema.decodeUnknownEffect(Schema.Array(schema))(rows).pipe(Effect.orDie);
+
+export const firstRow = <A>(rows: ReadonlyArray<A>) => Effect.fromOption(Array.head(rows)).pipe(Effect.orDie);
