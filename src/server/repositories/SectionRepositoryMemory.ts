@@ -32,7 +32,7 @@ export const SectionRepositoryMemory = Layer.effect(
         Ref.modify(store, (tables) => {
           const [deleted, rows] = removeById(tables.sections, id);
           // ON DELETE CASCADE
-          return [deleted, { sections: rows, items: tables.items.filter((item) => item.sectionId !== id) }];
+          return [deleted, { ...tables, sections: rows, items: tables.items.filter((item) => item.sectionId !== id) }];
         }),
     });
   }),
