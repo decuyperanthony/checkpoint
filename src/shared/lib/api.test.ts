@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
-import { sectionId } from "@/shared/lib/fixtures";
+import { sectionId } from "@/shared/testing/fixtures";
 
 import { callApi, UnexpectedApiError } from "./api";
 

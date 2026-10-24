@@ -14,5 +14,19 @@
     "sectionNotFound": "Cette section n'existe plus.",
     "itemNotFound": "Cet élément n'existe plus.",
     "unexpected": "Une erreur est survenue. Réessaie dans un instant."
+  },
+  "sections": {
+    "empty": "Aucune section pour l'instant.",
+    "newTitle": "Nouvelle section",
+    "add": "Ajouter",
+    "title": "Titre de la section {title}",
+    "rename": "Renommer la section {title}",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "remove": "Supprimer la section {title}",
+    "titleInvalid": "Le titre doit faire entre 1 et 200 caractères.",
+    "removeTitle": "Supprimer « {title} » ?",
+    "removeDescription": "La section et tous ses éléments seront supprimés définitivement.",
+    "removeConfirm": "Supprimer"
   }
 }

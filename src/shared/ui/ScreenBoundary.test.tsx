@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import messages from "@/shared/i18n/messages/fr.json";
-import { sectionNotFound } from "@/shared/lib/fixtures";
+import { sectionNotFound } from "@/shared/testing/fixtures";
 
 import { QueryProvider } from "./QueryProvider";
 import { ScreenBoundary } from "./ScreenBoundary";
