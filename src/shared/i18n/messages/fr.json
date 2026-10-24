@@ -29,6 +29,9 @@
   "errors": {
     "sectionNotFound": "Cette section n'existe plus.",
     "itemNotFound": "Cet élément n'existe plus.",
+    "invalidPin": "Code PIN incorrect.",
+    "tooManyAttempts": "Trop de tentatives. Réessaie dans quelques minutes.",
+    "sessionExpired": "Ta session a expiré. Saisis à nouveau ton code PIN.",
     "unexpected": "Une erreur est survenue. Réessaie dans un instant."
   },
   "sections": {

@@ -20,6 +20,7 @@ src/
     services/     Business logic, on repository interfaces only
     repositories/ Storage, provided by Layers (Drizzle, or in-memory in tests)
     infra/        Config, database, query helpers
+    security/     PIN verification (interface + argon2 Layer)
     handlers/     HttpApi implementation
   features/       sections, items: api/ (query hooks) and ui/
   shared/
@@ -43,17 +44,25 @@ pnpm install
 pnpm dev
 ```
 
+Environment, in `.env.local` (never committed) and on Vercel:
+
+| Variable       | Value                                                |
+| -------------- | ---------------------------------------------------- |
+| `DATABASE_URL` | Neon pooled connection string                        |
+| `PIN_HASH`     | argon2id hash of the PIN, printed by `pnpm hash-pin` |
+
 ## Scripts
 
-| Script              | Purpose              |
-| ------------------- | -------------------- |
-| `pnpm dev`          | Start the dev server |
-| `pnpm build`        | Production build     |
-| `pnpm typecheck`    | TypeScript           |
-| `pnpm lint`         | oxlint               |
-| `pnpm format`       | Format with oxfmt    |
-| `pnpm format:check` | Check formatting     |
-| `pnpm test`         | Vitest               |
+| Script              | Purpose                   |
+| ------------------- | ------------------------- |
+| `pnpm dev`          | Start the dev server      |
+| `pnpm build`        | Production build          |
+| `pnpm typecheck`    | TypeScript                |
+| `pnpm lint`         | oxlint                    |
+| `pnpm format`       | Format with oxfmt         |
+| `pnpm format:check` | Check formatting          |
+| `pnpm test`         | Vitest                    |
+| `pnpm hash-pin`     | Hash a PIN for `PIN_HASH` |
 
 ## License
 

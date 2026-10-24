@@ -5,6 +5,9 @@ import type { ApiError } from "@/shared/lib/api";
 const messageKeys = {
   SectionNotFound: "sectionNotFound",
   ItemNotFound: "itemNotFound",
+  InvalidPin: "invalidPin",
+  TooManyAttempts: "tooManyAttempts",
+  SessionExpired: "sessionExpired",
   UnexpectedApiError: "unexpected",
 } as const satisfies { [K in ApiError["_tag"]]: keyof Messages["errors"] };
 
