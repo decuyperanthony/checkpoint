@@ -1,6 +1,6 @@
 "use client";
 
-import { ListChecksIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { ListChecksIcon, PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
@@ -9,9 +9,9 @@ import { useRemoveSection, useRenameSection } from "@/features/sections/api/sect
 import { titleResolver } from "@/features/sections/model/titleForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Card } from "@/shared/ui/Card";
-import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
 import { IconTitle } from "@/shared/ui/IconTitle";
+import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
 import { TextForm } from "@/shared/ui/TextForm";
 
@@ -42,10 +42,9 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
       <IconTitle icon={ListChecksIcon}>{section.title}</IconTitle>
       <Stack direction="row" gap="sm">
         <IconButton ref={triggerRef} icon={PencilIcon} label={t("rename", { title: section.title })} onClick={open} />
-        <ConfirmRemoveButton
-          icon={Trash2Icon}
+        <RemoveButton
+          name={section.title}
           label={t("remove", { title: section.title })}
-          title={t("removeTitle", { title: section.title })}
           description={t("removeDescription")}
           disabled={remove.isPending}
           onConfirm={() => remove.mutate(section.id)}

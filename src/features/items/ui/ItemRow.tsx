@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { itemContentMaxLength, type Item } from "@/contract/schemas/Item";
@@ -9,8 +9,8 @@ import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
 import { contentResolver } from "@/features/items/model/contentForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { Checkbox } from "@/shared/ui/Checkbox";
-import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
+import { RemoveButton } from "@/shared/ui/RemoveButton";
 import { Stack } from "@/shared/ui/Stack";
 import { TextForm } from "@/shared/ui/TextForm";
 
@@ -53,10 +53,9 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
       />
       <Stack direction="row" gap="sm">
         <IconButton ref={triggerRef} icon={PencilIcon} label={t("edit", names)} onClick={open} />
-        <ConfirmRemoveButton
-          icon={Trash2Icon}
+        <RemoveButton
+          name={item.content}
           label={t("remove", names)}
-          title={t("removeTitle", { content: item.content })}
           description={t("removeDescription")}
           disabled={remove.isPending}
           onConfirm={() => remove.mutate(item.id)}
