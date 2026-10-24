@@ -2,11 +2,12 @@
 
 import { ListChecksIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { sectionTitleMaxLength, type Section } from "@/contract/schemas/Section";
 import { useRemoveSection, useRenameSection } from "@/features/sections/api/sections";
 import { titleResolver } from "@/features/sections/model/titleForm";
+import { useReturnFocus } from "@/shared/lib/useReturnFocus";
 import { Card } from "@/shared/ui/Card";
 import { ConfirmIconButton } from "@/shared/ui/ConfirmIconButton";
 import { IconButton } from "@/shared/ui/IconButton";
@@ -25,13 +26,7 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
   const rename = useRenameSection();
   const remove = useRemoveSection();
 
-  // When the editor closes, keyboard focus goes back to the button that opened it.
-  const renameButton = useRef<HTMLButtonElement>(null);
-  const wasEditing = useRef(false);
-  useEffect(() => {
-    if (wasEditing.current && !editing) renameButton.current?.focus();
-    wasEditing.current = editing;
-  }, [editing]);
+  const renameButton = useReturnFocus<HTMLButtonElement>(editing);
 
   const header = editing ? (
     <TextForm
