@@ -5,5 +5,14 @@
   },
   "theme": {
     "toggle": "Basculer entre thème clair et sombre"
+  },
+  "screen": {
+    "loading": "Chargement…",
+    "retry": "Réessayer"
+  },
+  "errors": {
+    "sectionNotFound": "Cette section n'existe plus.",
+    "itemNotFound": "Cet élément n'existe plus.",
+    "unexpected": "Une erreur est survenue. Réessaie dans un instant."
   }
 }

@@ -70,6 +70,8 @@ export default defineConfig({
     ],
     "typescript/consistent-type-definitions": ["error", "type"],
     "checkpoint/arrow-functions": "error",
+    // `_tag` is how Effect discriminates tagged errors and unions.
+    "no-underscore-dangle": ["error", { allow: ["_tag"] }],
     // The automatic JSX runtime does not need React in scope.
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": ["error", { allow: ["**/*.css", "@testing-library/jest-dom/vitest"] }],
@@ -93,8 +95,11 @@ export default defineConfig({
       },
     },
     { files: ["src/**/*.test.tsx"], rules: { "react/jsx-no-literals": "off" } },
-    // next-intl is typed through module augmentation, which requires an interface.
-    { files: ["src/shared/i18n/next-intl.d.ts"], rules: { "typescript/consistent-type-definitions": "off" } },
+    // Module augmentation (next-intl, TanStack Query) only works with an interface.
+    {
+      files: ["src/shared/i18n/next-intl.d.ts", "src/shared/lib/react-query.d.ts"],
+      rules: { "typescript/consistent-type-definitions": "off" },
+    },
     { files: ["src/shared/ui/**"], rules: restrictImports(effectRuntime) },
     // shadcn atoms are vendored as generated, so they can be updated with the shadcn CLI.
     {

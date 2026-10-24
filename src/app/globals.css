@@ -112,3 +112,11 @@
     @apply font-sans;
   }
 }
+
+/* Toasts follow the design tokens. Sonner ships unlayered CSS, so its variables are
+   overridden with a more specific selector rather than with utility classes. */
+html [data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--popover);
+  --normal-border: var(--border);
+  --normal-text: var(--popover-foreground);
+}

@@ -5,7 +5,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { cn } from "@/shared/lib/cn";
+import { QueryProvider } from "@/shared/ui/QueryProvider";
 import { ThemeProvider } from "@/shared/ui/ThemeProvider";
+import { Toaster } from "@/shared/ui/Toaster";
 
 import "./globals.css";
 
@@ -28,7 +30,10 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
     <html lang={locale} className={cn("font-sans", geist.variable)} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <QueryProvider>{children}</QueryProvider>
+            <Toaster />
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
