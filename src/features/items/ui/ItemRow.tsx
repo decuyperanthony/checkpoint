@@ -9,7 +9,7 @@ import { useRemoveItem, useUpdateItem } from "@/features/items/api/items";
 import { contentResolver } from "@/features/items/model/contentForm";
 import { useReturnFocus } from "@/shared/lib/useReturnFocus";
 import { Checkbox } from "@/shared/ui/Checkbox";
-import { ConfirmIconButton } from "@/shared/ui/ConfirmIconButton";
+import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
 import { Stack } from "@/shared/ui/Stack";
 import { TextForm } from "@/shared/ui/TextForm";
@@ -58,7 +58,7 @@ export const ItemRow = ({ item }: ItemRowProps) => {
           label={t("edit", { content: item.content })}
           onClick={() => setEditing(true)}
         />
-        <ConfirmIconButton
+        <ConfirmRemoveButton
           icon={Trash2Icon}
           label={t("remove", { content: item.content })}
           title={t("removeTitle", { content: item.content })}

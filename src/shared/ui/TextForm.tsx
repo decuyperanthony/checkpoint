@@ -68,6 +68,7 @@ export const TextForm = ({
           }}
           error={formState.errors.value === undefined ? undefined : invalidMessage}
         />
+        {/* Two uses so far: adding a new value, or saving an edited one. */}
         <Button type="submit" disabled={pending}>
           {edit === undefined ? t("add") : t("save")}
         </Button>

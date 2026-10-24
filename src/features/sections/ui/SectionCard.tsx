@@ -9,7 +9,7 @@ import { useRemoveSection, useRenameSection } from "@/features/sections/api/sect
 import { titleResolver } from "@/features/sections/model/titleForm";
 import { useReturnFocus } from "@/shared/lib/useReturnFocus";
 import { Card } from "@/shared/ui/Card";
-import { ConfirmIconButton } from "@/shared/ui/ConfirmIconButton";
+import { ConfirmRemoveButton } from "@/shared/ui/ConfirmRemoveButton";
 import { IconButton } from "@/shared/ui/IconButton";
 import { IconTitle } from "@/shared/ui/IconTitle";
 import { Stack } from "@/shared/ui/Stack";
@@ -49,7 +49,7 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
           label={t("rename", { title: section.title })}
           onClick={() => setEditing(true)}
         />
-        <ConfirmIconButton
+        <ConfirmRemoveButton
           icon={Trash2Icon}
           label={t("remove", { title: section.title })}
           title={t("removeTitle", { title: section.title })}

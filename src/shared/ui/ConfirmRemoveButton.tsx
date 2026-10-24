@@ -16,7 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/shared/ui/primitives/alert-dialog";
 
-type ConfirmIconButtonProps = {
+type ConfirmRemoveButtonProps = {
   readonly icon: LucideIcon;
   readonly label: string;
   readonly title: string;
@@ -26,14 +26,14 @@ type ConfirmIconButtonProps = {
 };
 
 // For removals: the icon button opens a dialog, and only confirming runs the action.
-export const ConfirmIconButton = ({
+export const ConfirmRemoveButton = ({
   icon,
   label,
   title,
   description,
   disabled = false,
   onConfirm,
-}: ConfirmIconButtonProps) => {
+}: ConfirmRemoveButtonProps) => {
   const t = useTranslations("actions");
 
   return (
