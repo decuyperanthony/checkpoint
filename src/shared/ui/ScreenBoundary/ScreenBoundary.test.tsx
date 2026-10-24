@@ -8,9 +8,9 @@ import { describe, expect, it, vi } from "vitest";
 import messages from "@/shared/i18n/messages/fr.json";
 import { sectionNotFound } from "@/shared/testing/fixtures";
 
-import { QueryProvider } from "./QueryProvider";
+import { QueryProvider } from "@/shared/ui/QueryProvider";
 import { ScreenBoundary } from "./ScreenBoundary";
-import { Toaster } from "./Toaster";
+import { Toaster } from "@/shared/ui/Toaster";
 
 const renderWithProviders = (children: ReactNode) =>
   render(

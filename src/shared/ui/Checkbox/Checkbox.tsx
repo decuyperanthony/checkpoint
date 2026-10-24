@@ -1,22 +1,25 @@
 "use client";
 
+import { cva, type VariantProps } from "class-variance-authority";
 import { useId, type ReactNode } from "react";
 
 import { Checkbox as PrimitiveCheckbox } from "@/shared/ui/primitives/checkbox";
 import { Label } from "@/shared/ui/primitives/label";
 
-const labelStyles = {
-  plain: undefined,
-  strikethrough: "peer-data-[state=checked]:text-muted-foreground peer-data-[state=checked]:line-through",
-} as const;
+const labelStyle = cva("", {
+  variants: {
+    checkedStyle: {
+      plain: "",
+      strikethrough: "peer-data-[state=checked]:text-muted-foreground peer-data-[state=checked]:line-through",
+    },
+  },
+  defaultVariants: { checkedStyle: "plain" },
+});
 
-type CheckedStyle = keyof typeof labelStyles;
-
-type CheckboxProps = {
+type CheckboxProps = VariantProps<typeof labelStyle> & {
   readonly label: ReactNode;
   readonly checked: boolean;
   readonly onCheckedChange: (checked: boolean) => void;
-  readonly checkedStyle?: CheckedStyle;
   readonly disabled?: boolean;
   // While a change is being saved: further changes are ignored, but unlike `disabled` the
   // checkbox keeps keyboard focus.
@@ -27,7 +30,7 @@ export const Checkbox = ({
   label,
   checked,
   onCheckedChange,
-  checkedStyle = "plain",
+  checkedStyle,
   disabled = false,
   pending = false,
 }: CheckboxProps) => {
@@ -44,7 +47,7 @@ export const Checkbox = ({
           if (!pending) onCheckedChange(state === true);
         }}
       />
-      <Label htmlFor={id} className={labelStyles[checkedStyle]}>
+      <Label htmlFor={id} className={labelStyle({ checkedStyle })}>
         {label}
       </Label>
     </div>
