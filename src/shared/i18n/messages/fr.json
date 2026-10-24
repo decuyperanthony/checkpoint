@@ -19,8 +19,8 @@
   },
   "form": {
     "errors": {
-      "required": "Ce champ est obligatoire.",
-      "tooLong": "Ce champ ne peut pas dépasser {max} caractères.",
+      "isMinLength": "{minLength, plural, =1 {Ce champ est obligatoire.} other {Ce champ doit contenir au moins # caractères.}}",
+      "isMaxLength": "Ce champ ne peut pas dépasser {maxLength} caractères.",
       "invalid": "Cette valeur n'est pas valide."
     }
   },

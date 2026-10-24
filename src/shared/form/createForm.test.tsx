@@ -9,7 +9,8 @@ import { createForm } from "./createForm";
 
 const ProfileSchema = Schema.Struct({
   name: Schema.Trim.check(Schema.isNonEmpty(), Schema.isMaxLength(10)),
-  nickname: Schema.String,
+  // A check without a message of its own.
+  nickname: Schema.String.check(Schema.isPattern(/^[a-z]*$/)),
 });
 type Profile = typeof ProfileSchema.Type;
 
@@ -72,6 +73,18 @@ describe("createForm", () => {
 
     expect(screen.getByRole("textbox", { name: "Name" })).toHaveAccessibleDescription(
       "Ce champ ne peut pas dépasser 10 caractères.",
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("words a check without a message of its own as an invalid value", async () => {
+    const onSubmit = renderProfile("Ada");
+
+    await userEvent.type(screen.getByRole("textbox", { name: "Nickname" }), "ADA");
+    await save();
+
+    expect(screen.getByRole("textbox", { name: "Nickname" })).toHaveAccessibleDescription(
+      "Cette valeur n'est pas valide.",
     );
     expect(onSubmit).not.toHaveBeenCalled();
   });

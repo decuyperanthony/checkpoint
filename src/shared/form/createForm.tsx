@@ -1,8 +1,6 @@
 "use client";
 
-import { effectTsResolver } from "@hookform/resolvers/effect-ts";
 import type { Schema } from "effect";
-import { useTranslations } from "next-intl";
 import type { ComponentProps, ReactNode } from "react";
 import {
   FormProvider,
@@ -16,26 +14,10 @@ import {
 import { TextField as PlainTextField } from "@/shared/ui/TextField";
 
 import { fieldFacts, type FormFields } from "./fieldFacts";
+import { useSchemaResolver } from "./useSchemaResolver";
 
 // What a bound field sets itself, from the form and the schema.
 type BoundProps = "name" | "value" | "onChange" | "onBlur" | "ref" | "error" | "required" | "maxLength";
-
-// One generic message per kind of error, worked out from the value: schemas carry no copy.
-const useErrorMessage = ({
-  invalid,
-  value,
-  maxLength,
-}: {
-  invalid: boolean;
-  value: string;
-  maxLength: number | undefined;
-}) => {
-  const t = useTranslations("form.errors");
-  if (!invalid) return undefined;
-  if (value.trim() === "") return t("required");
-  if (maxLength !== undefined && value.length > maxLength) return t("tooLong", { max: maxLength });
-  return t("invalid");
-};
 
 // A form typed by its schema. Call it once, at module level:
 //
@@ -46,17 +28,17 @@ const useErrorMessage = ({
 //   </SectionForm>
 //
 // Field names come from the schema (`name="titel"` does not compile), `onSubmit` receives the
-// decoded values, and `required` / `maxLength` are read from the schema's checks.
+// decoded values, `required` / `maxLength` are read from the schema's checks, and each error
+// is worded after the check that failed (see useSchemaResolver).
 export const createForm = <F extends FormFields>(schema: Schema.Struct<F>) => {
   type Input = Schema.Struct<F>["Encoded"];
   type Output = Schema.Struct<F>["Type"];
 
-  const resolver = effectTsResolver(schema);
   const facts = fieldFacts(schema.fields);
 
   // Every field gets its default value: an empty text is "".
-  const useForm = (options: { readonly defaultValues: Input & DefaultValues<Input> }) =>
-    useReactHookForm<Input, unknown, Output>({ ...options, resolver });
+  const useForm = (options: { defaultValues: Input & DefaultValues<Input> }) =>
+    useReactHookForm<Input, unknown, Output>({ ...options, resolver: useSchemaResolver(schema) });
 
   type FormProps = {
     readonly form: UseFormReturn<Input, unknown, Output>;
@@ -81,17 +63,15 @@ export const createForm = <F extends FormFields>(schema: Schema.Struct<F>) => {
   const TextField = ({ name, ...props }: TextFieldProps) => {
     const { field, fieldState } = useController<Input>({ name });
     const value = typeof field.value === "string" ? field.value : "";
-    const maxLength = facts.maxLength(name);
-    const error = useErrorMessage({ invalid: fieldState.invalid, value, maxLength });
 
     return (
       <PlainTextField
         {...props}
         {...field}
         value={value}
-        maxLength={maxLength}
+        maxLength={facts.maxLength(name)}
         required={facts.required(name)}
-        error={error}
+        error={fieldState.error?.message}
       />
     );
   };
