@@ -15,7 +15,6 @@ export const ThemeToggle = () => {
   return (
     <Button
       variant="ghost"
-      size="md"
       aria-label={t("toggle")}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
