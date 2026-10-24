@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SectionList } from "@/features/sections/ui/SectionList";
 import { makeFakeApi } from "@/server/testing/fakeApi";
-import { renderScreen } from "@/shared/lib/renderScreen";
+import { renderScreen } from "@/shared/testing/renderScreen";
 
 const api = vi.hoisted(() => ({ fetch: vi.fn<typeof fetch>() }));
 vi.stubGlobal("fetch", api.fetch);

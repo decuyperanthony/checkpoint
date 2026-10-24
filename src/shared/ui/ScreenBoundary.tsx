@@ -24,7 +24,7 @@ const ScreenError = ({ error, resetErrorBoundary }: FallbackProps) => {
   );
 };
 
-const ScreenLoading = () => {
+export const ScreenLoading = () => {
   const t = useTranslations("screen");
 
   return <output>{t("loading")}</output>;
