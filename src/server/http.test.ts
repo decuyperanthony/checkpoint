@@ -1,21 +1,21 @@
-import { Layer, Schema } from "effect";
+import { Effect, Layer, Schema } from "effect";
 import { HttpRouter } from "effect/http";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { Section } from "@/contract/schemas/Section";
 import { ApiLive } from "@/server/http";
+import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
 
-const makeApp = () =>
-  HttpRouter.toWebHandler(ApiLive.pipe(Layer.provide(SectionRepositoryMemory)), { disableLogger: true });
+const makeApp = (repositories: Layer.Layer<SectionRepository>) =>
+  HttpRouter.toWebHandler(ApiLive.pipe(Layer.provide(repositories)), { disableLogger: true });
 
-let app: ReturnType<typeof makeApp>;
+let app = makeApp(SectionRepositoryMemory);
 
-beforeEach(() => {
-  app = makeApp();
+afterEach(async () => {
+  await app.dispose();
+  app = makeApp(SectionRepositoryMemory);
 });
-
-afterEach(() => app.dispose());
 
 const send = (method: string, path: string, body?: unknown) =>
   app.handler(
@@ -25,6 +25,9 @@ const send = (method: string, path: string, body?: unknown) =>
     }),
   );
 
+const readJson = async <A, I>(response: Response, schema: Schema.Codec<A, I>) =>
+  Schema.decodeUnknownSync(schema)(await response.json());
+
 const unknownId = "6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a";
 
 describe("sections API", () => {
@@ -32,7 +35,7 @@ describe("sections API", () => {
     const response = await send("POST", "/sections", { title: "  Courses  " });
 
     expect(response.status).toBe(201);
-    expect(await response.json()).toMatchObject({ title: "Courses", position: 0 });
+    expect(await readJson(response, Section)).toMatchObject({ title: "Courses", position: 0 });
   });
 
   it("rejects a blank title", async () => {
@@ -45,7 +48,7 @@ describe("sections API", () => {
     const response = await send("PATCH", `/sections/${unknownId}`, { title: "Travail" });
 
     expect(response.status).toBe(404);
-    expect(await response.json()).toEqual({ _tag: "SectionNotFound", id: unknownId });
+    expect(await response.text()).toBe(JSON.stringify({ _tag: "SectionNotFound", id: unknownId }));
   });
 
   it("rejects an id that is not a uuid", async () => {
@@ -55,15 +58,30 @@ describe("sections API", () => {
   });
 
   it("lists sections after creation and removal", async () => {
-    const created = Schema.decodeUnknownSync(Section)(
-      await (await send("POST", "/sections", { title: "Courses" })).json(),
-    );
+    const created = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
     await send("POST", "/sections", { title: "Travail" });
 
     const removal = await send("DELETE", `/sections/${created.id}`);
-    const list = await (await send("GET", "/sections")).json();
+    const list = await readJson(await send("GET", "/sections"), Schema.Array(Section));
 
     expect(removal.status).toBe(204);
-    expect(list).toMatchObject([{ title: "Travail" }]);
+    expect(list.map((section) => section.title)).toEqual(["Travail"]);
+  });
+
+  it("answers a database failure with an empty 500, without leaking the cause", async () => {
+    await app.dispose();
+    const failingDatabase = Layer.effect(
+      SectionRepository,
+      Effect.gen(function* () {
+        const memory = yield* SectionRepository;
+        return { ...memory, list: Effect.die(new Error("connection to db.internal refused")) };
+      }),
+    ).pipe(Layer.provide(SectionRepositoryMemory));
+    app = makeApp(failingDatabase);
+
+    const response = await send("GET", "/sections");
+
+    expect(response.status).toBe(500);
+    expect(await response.text()).toBe("");
   });
 });
