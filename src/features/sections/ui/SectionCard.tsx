@@ -1,17 +1,17 @@
 "use client";
 
-import { ListChecksIcon, PencilIcon } from "lucide-react";
+import { ListChecksIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import type { Section } from "@/contract/schemas/Section";
 import { useRemoveSection } from "@/features/sections/api/sections";
 import { RenameSectionForm } from "@/features/sections/ui/RenameSectionForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
+import { ActionsMenu } from "@/shared/ui/ActionsMenu";
 import { Card } from "@/shared/ui/Card";
-import { IconButton } from "@/shared/ui/IconButton";
 import { IconTitle } from "@/shared/ui/IconTitle";
-import { RemoveButton } from "@/shared/ui/RemoveButton";
+import { RemoveDialog } from "@/shared/ui/RemoveDialog";
 import { Stack } from "@/shared/ui/Stack";
 
 type SectionCardProps = {
@@ -20,8 +20,9 @@ type SectionCardProps = {
 };
 
 export const SectionCard = ({ section, children }: SectionCardProps) => {
-  const t = useTranslations("sections");
+  const t = useTranslations();
   const { editing, triggerRef, open, close } = useInlineEdit();
+  const [removing, setRemoving] = useState(false);
   const remove = useRemoveSection();
 
   const header = editing ? (
@@ -29,18 +30,29 @@ export const SectionCard = ({ section, children }: SectionCardProps) => {
   ) : (
     <Stack direction="row" justify="between">
       <IconTitle icon={ListChecksIcon}>{section.title}</IconTitle>
-      <Stack direction="row" gap="sm">
-        <IconButton ref={triggerRef} icon={PencilIcon} label={t("rename", { title: section.title })} onClick={open} />
-        <RemoveButton
-          name={section.title}
-          label={t("remove", { title: section.title })}
-          description={t("removeDescription")}
-          disabled={remove.isPending}
-          onConfirm={() => remove.mutate(section.id)}
-        />
-      </Stack>
+      <ActionsMenu label={t("sections.menu", { title: section.title })} triggerRef={triggerRef}>
+        <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
+          {t("actions.rename")}
+        </ActionsMenu.Item>
+        <ActionsMenu.Separator />
+        <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
+          {t("actions.remove")}
+        </ActionsMenu.Item>
+      </ActionsMenu>
     </Stack>
   );
 
-  return <Card header={header}>{children}</Card>;
+  return (
+    <Card header={header}>
+      {children}
+      <RemoveDialog
+        name={section.title}
+        description={t("sections.removeDescription")}
+        open={removing}
+        onOpenChange={setRemoving}
+        returnFocusTo={triggerRef}
+        onConfirm={() => remove.mutate(section.id)}
+      />
+    </Card>
+  );
 };

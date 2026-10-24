@@ -14,6 +14,8 @@
     "add": "Ajouter",
     "save": "Enregistrer",
     "cancel": "Annuler",
+    "rename": "Renommer",
+    "edit": "Modifier",
     "remove": "Supprimer",
     "removeTitle": "Supprimer « {name} » ?"
   },
@@ -33,15 +35,13 @@
     "empty": "Aucune section pour l'instant.",
     "newTitle": "Nouvelle section",
     "title": "Titre de la section {title}",
-    "rename": "Renommer la section {title}",
-    "remove": "Supprimer la section {title}",
+    "menu": "Actions de la section {title}",
     "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
   },
   "items": {
     "newContent": "Nouvel élément dans {section}",
     "content": "Texte de l'élément {content} dans {section}",
-    "edit": "Modifier l'élément {content} dans {section}",
-    "remove": "Supprimer l'élément {content} dans {section}",
+    "menu": "Actions de l'élément {content} dans {section}",
     "removeDescription": "L'élément sera supprimé définitivement."
   }
 }
