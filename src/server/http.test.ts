@@ -3,12 +3,12 @@ import { HttpRouter } from "effect/http";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { Section } from "@/contract/schemas/Section";
-import { ApiLive } from "@/server/http";
+import { ApiHandlers } from "@/server/http";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
 
 const makeApp = (repositories: Layer.Layer<SectionRepository>) =>
-  HttpRouter.toWebHandler(ApiLive.pipe(Layer.provide(repositories)), { disableLogger: true });
+  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide(repositories)), { disableLogger: true });
 
 let app = makeApp(SectionRepositoryMemory);
 

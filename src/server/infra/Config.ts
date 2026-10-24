@@ -32,17 +32,15 @@ const environmentVariable = <A>({ name, schema, expected }: EnvironmentVariable<
 
 const PostgresUrl = Schema.String.check(Schema.isPattern(/^postgres(ql)?:\/\/.+/));
 
-export const loadAppConfig = Effect.gen(function* () {
-  const databaseUrl = yield* environmentVariable({
-    name: "DATABASE_URL",
-    schema: PostgresUrl,
-    expected: "a postgres:// connection string",
-  });
-  return { databaseUrl: Redacted.make(databaseUrl) };
-});
-
-export class AppConfig extends Context.Service<AppConfig, Effect.Success<typeof loadAppConfig>>()(
-  "checkpoint/AppConfig",
-) {}
-
-export const AppConfigLive = Layer.effect(AppConfig, loadAppConfig);
+export class AppConfig extends Context.Service<AppConfig>()("checkpoint/AppConfig", {
+  make: Effect.gen(function* () {
+    const databaseUrl = yield* environmentVariable({
+      name: "DATABASE_URL",
+      schema: PostgresUrl,
+      expected: "a postgres:// connection string",
+    });
+    return { databaseUrl: Redacted.make(databaseUrl) };
+  }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}

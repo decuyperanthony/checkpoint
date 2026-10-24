@@ -8,7 +8,7 @@ import { SectionService } from "@/server/services/SectionService";
 
 // The whole API, still waiting for its repositories: production provides the Drizzle ones
 // (main.ts), tests provide the in-memory ones.
-export const ApiLive = HttpApiBuilder.layer(Api).pipe(
+export const ApiHandlers = HttpApiBuilder.layer(Api).pipe(
   Layer.provide(SectionsHandlers),
   Layer.provide(SectionService.layer),
   Layer.provide(HttpServer.layerServices),
