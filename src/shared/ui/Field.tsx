@@ -1,5 +1,3 @@
-"use client";
-
 import { useId, type ReactNode } from "react";
 
 import { Label } from "@/shared/ui/primitives/label";
@@ -35,7 +33,7 @@ export const Field = ({ label, labelVisibility = "visible", error, children }: F
         "aria-describedby": error === undefined ? undefined : errorId,
       })}
       {error === undefined ? null : (
-        <p id={errorId} className="text-sm text-error">
+        <p id={errorId} role="alert" className="text-sm text-error">
           {error}
         </p>
       )}

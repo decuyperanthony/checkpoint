@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
 import type { Size } from "@/shared/ui/tokens";
 
-type HeadingLevel = 2 | 3 | 4;
+const headings = { 2: "h2", 3: "h3", 4: "h4" } as const;
 
-const headings = { 2: "h2", 3: "h3", 4: "h4" } as const satisfies { [K in HeadingLevel]: string };
+type HeadingLevel = keyof typeof headings;
 
 const sizes = {
   sm: { text: "text-sm", icon: "size-4" },

@@ -3,8 +3,6 @@ import type { ComponentProps } from "react";
 import { Button as PrimitiveButton } from "@/shared/ui/primitives/button";
 import type { Size } from "@/shared/ui/tokens";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "destructive";
-
 type PrimitiveProps = ComponentProps<typeof PrimitiveButton>;
 
 const variants = {
@@ -12,7 +10,9 @@ const variants = {
   secondary: "secondary",
   ghost: "ghost",
   destructive: "destructive",
-} as const satisfies { [K in ButtonVariant]: PrimitiveProps["variant"] };
+} as const satisfies { [variant: string]: PrimitiveProps["variant"] };
+
+type ButtonVariant = keyof typeof variants;
 
 // The atom stops at `lg`; `xl` extends it with the next steps of the spacing scale.
 const sizes = {

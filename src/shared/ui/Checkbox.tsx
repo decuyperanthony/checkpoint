@@ -5,12 +5,12 @@ import { useId, type ReactNode } from "react";
 import { Checkbox as PrimitiveCheckbox } from "@/shared/ui/primitives/checkbox";
 import { Label } from "@/shared/ui/primitives/label";
 
-type CheckedStyle = "plain" | "strikethrough";
-
 const labelStyles = {
   plain: undefined,
   strikethrough: "peer-data-[state=checked]:text-muted-foreground peer-data-[state=checked]:line-through",
-} as const satisfies { [K in CheckedStyle]: string | undefined };
+} as const;
+
+type CheckedStyle = keyof typeof labelStyles;
 
 type CheckboxProps = {
   readonly label: ReactNode;

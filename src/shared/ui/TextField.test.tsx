@@ -16,6 +16,7 @@ describe("TextField", () => {
     const input = screen.getByRole("textbox", { name: "Section title" });
     expect(input).toHaveAccessibleDescription("Title is required");
     expect(input).toBeInvalid();
+    expect(screen.getByRole("alert")).toHaveTextContent("Title is required");
   });
 
   it("is valid without an error", () => {
