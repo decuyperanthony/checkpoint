@@ -17,6 +17,13 @@
     "remove": "Supprimer",
     "removeTitle": "Supprimer « {name} » ?"
   },
+  "form": {
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "tooLong": "Ce champ ne peut pas dépasser {max} caractères.",
+      "invalid": "Cette valeur n'est pas valide."
+    }
+  },
   "errors": {
     "sectionNotFound": "Cette section n'existe plus.",
     "itemNotFound": "Cet élément n'existe plus.",
