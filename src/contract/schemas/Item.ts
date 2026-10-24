@@ -18,9 +18,10 @@ export type Item = typeof Item.Type;
 
 export const CreateItemPayload = Schema.Struct({ content: ItemContent });
 
-// Partial update: edit the text, check or uncheck, or both — but at least one of them.
-export const UpdateItemPayload = Schema.Struct({
-  content: Schema.optionalKey(ItemContent),
-  done: Schema.optionalKey(Schema.Boolean),
-}).check(Schema.makeFilter((changes) => changes.content !== undefined || changes.done !== undefined));
+// Partial update: edit the text, check or uncheck, or both. The union rules out `{}`, in the
+// type as well as at runtime.
+export const UpdateItemPayload = Schema.Union([
+  Schema.Struct({ content: ItemContent, done: Schema.optionalKey(Schema.Boolean) }),
+  Schema.Struct({ content: Schema.optionalKey(ItemContent), done: Schema.Boolean }),
+]);
 export type UpdateItemPayload = typeof UpdateItemPayload.Type;
