@@ -15,12 +15,14 @@ export const unknownUuid = "6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a";
 
 // The PIN that tests log in with, and its hash in place of `PIN_HASH`.
 export const testPin = Schema.decodeSync(Pin)("2468");
-export const AuthConfigTest = Layer.succeed(AuthConfig, { pinHash: Redacted.make(hashSync(testPin)) });
+export const PinVerifierTest = PinVerifierArgon2.pipe(
+  Layer.provide(Layer.succeed(AuthConfig, { pinHash: Redacted.make(hashSync(testPin)) })),
+);
 
 const ServicesMemory = Layer.mergeAll(
   SectionService.layer,
   ItemService.layer,
-  AuthService.layer.pipe(Layer.provide(PinVerifierArgon2), Layer.provide(AuthConfigTest)),
+  AuthService.layer.pipe(Layer.provide(PinVerifierTest)),
 ).pipe(Layer.provide(RepositoriesMemory));
 
 // Runs a program against the services on a fresh in-memory store.
