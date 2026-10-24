@@ -1,35 +1,57 @@
 import { Effect, Layer, Schema } from "effect";
 import { HttpRouter } from "effect/http";
-import { afterEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { Item } from "@/contract/schemas/Item";
 import { Section } from "@/contract/schemas/Section";
 import { ApiHandlers } from "@/server/http";
 import type { ItemRepository } from "@/server/repositories/ItemRepository";
 import { ItemRepositoryMemory } from "@/server/repositories/ItemRepositoryMemory";
+import type { LoginAttemptRepository } from "@/server/repositories/LoginAttemptRepository";
+import { LoginAttemptRepositoryMemory } from "@/server/repositories/LoginAttemptRepositoryMemory";
 import { MemoryStore } from "@/server/repositories/MemoryStore";
 import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
-import { unknownUuid } from "@/server/testing/fixtures";
+import type { SessionRepository } from "@/server/repositories/SessionRepository";
+import { SessionRepositoryMemory } from "@/server/repositories/SessionRepositoryMemory";
+import { PinVerifierTest, testPin, unknownUuid } from "@/server/testing/fixtures";
 
-const makeApp = (repositories: Layer.Layer<SectionRepository | ItemRepository>) =>
-  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide(repositories)), { disableLogger: true });
+type Repositories = SectionRepository | ItemRepository | SessionRepository | LoginAttemptRepository;
+
+const makeApp = (repositories: Layer.Layer<Repositories>) =>
+  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide([repositories, PinVerifierTest])), { disableLogger: true });
 
 let app = makeApp(RepositoriesMemory);
 
-afterEach(async () => {
-  await app.dispose();
-  app = makeApp(RepositoriesMemory);
-});
+type SendOptions = { body?: unknown; headers?: { [name: string]: string } };
 
-const send = (method: string, path: string, body?: unknown) =>
+const request = (method: string, path: string, { body, headers = {} }: SendOptions = {}) =>
   app.handler(
     new Request(`http://localhost/api${path}`, {
       method,
-      ...(body === undefined ? {} : { body: JSON.stringify(body), headers: { "content-type": "application/json" } }),
+      headers: body === undefined ? headers : { ...headers, "content-type": "application/json" },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     }),
   );
+
+// The `name=value` part of a Set-Cookie header, as a browser would send it back.
+const cookieOf = (response: Response) => response.headers.get("set-cookie")?.split(";")[0] ?? "";
+
+const logIn = (pin: string = testPin, headers: { [name: string]: string } = {}) =>
+  request("POST", "/auth/login", { body: { pin }, headers });
+
+let session = "";
+
+beforeEach(async () => {
+  await app.dispose();
+  app = makeApp(RepositoriesMemory);
+  session = cookieOf(await logIn());
+});
+
+// What the browser does once logged in: every request carries the session cookie.
+const send = (method: string, path: string, body?: unknown) =>
+  request(method, path, { body, headers: { cookie: session } });
 
 const readJson = async <A, I>(response: Response, schema: Schema.Codec<A, I>) =>
   Schema.decodeUnknownSync(schema)(await response.json());
@@ -80,8 +102,13 @@ describe("sections API", () => {
         const memory = yield* SectionRepository;
         return { ...memory, list: Effect.die(new Error("connection to db.internal refused")) };
       }),
-    ).pipe(Layer.provide(SectionRepositoryMemory), Layer.merge(ItemRepositoryMemory), Layer.provide(MemoryStore.layer));
+    ).pipe(
+      Layer.provide(SectionRepositoryMemory),
+      Layer.merge(Layer.mergeAll(ItemRepositoryMemory, SessionRepositoryMemory, LoginAttemptRepositoryMemory)),
+      Layer.provide(MemoryStore.layer),
+    );
     app = makeApp(failingDatabase);
+    session = cookieOf(await logIn());
 
     const response = await send("GET", "/sections");
 
@@ -118,5 +145,67 @@ describe("items API", () => {
     const response = await send("POST", `/sections/${unknownUuid}/items`, { content: "Lait" });
 
     expect(response.status).toBe(404);
+  });
+});
+
+// As Vercel forwards it: the client first, then the proxies.
+const from = (ip: string) => ({ "x-forwarded-for": `${ip}, 10.0.0.1` });
+
+describe("auth API", () => {
+  it("logs in with the right PIN through a Secure, httpOnly, SameSite=Lax cookie", async () => {
+    const response = await logIn();
+
+    expect(response.status).toBe(204);
+    const cookie = response.headers.get("set-cookie") ?? "";
+    expect(cookie).toMatch(/^__Host-checkpoint_session=[\w-]{43};/);
+    expect(cookie).toContain("HttpOnly");
+    expect(cookie).toContain("Secure");
+    expect(cookie).toContain("SameSite=Lax");
+    expect(cookie).toContain("Path=/");
+  });
+
+  it("refuses every other endpoint without a valid session", async () => {
+    const responses = await Promise.all([
+      request("GET", "/sections"),
+      request("GET", "/items"),
+      request("POST", "/sections", {
+        body: { title: "Courses" },
+        headers: { cookie: "__Host-checkpoint_session=forged" },
+      }),
+    ]);
+
+    expect(responses.map((response) => response.status)).toEqual([401, 401, 401]);
+    expect(await responses[0]?.text()).toBe(JSON.stringify({ _tag: "SessionExpired" }));
+  });
+
+  it("refuses a wrong PIN without opening a session", async () => {
+    const response = await logIn("0000");
+
+    expect(response.status).toBe(401);
+    expect(await response.text()).toBe(JSON.stringify({ _tag: "InvalidPin" }));
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("refuses a PIN that is not 4 to 12 digits before checking it", async () => {
+    expect((await logIn("12ab")).status).toBe(400);
+  });
+
+  it("blocks the forwarded client address after too many wrong PINs", async () => {
+    for (const _ of Array.from({ length: 5 })) await logIn("0000", from("203.0.113.7"));
+
+    const blocked = await logIn(testPin, from("203.0.113.7"));
+    const otherClient = await logIn(testPin, from("198.51.100.1"));
+
+    expect(blocked.status).toBe(429);
+    expect(await blocked.text()).toBe(JSON.stringify({ _tag: "TooManyAttempts", retryAfterSeconds: 900 }));
+    expect(otherClient.status).toBe(204);
+  });
+
+  it("logs out: the session ends and the cookie is cleared", async () => {
+    const response = await send("POST", "/auth/logout");
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("set-cookie")).toMatch(/^__Host-checkpoint_session=;.*Max-Age=0/);
+    expect((await send("GET", "/sections")).status).toBe(401);
   });
 });
