@@ -5,10 +5,10 @@ import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import { SectionId } from "@/contract/schemas/Section";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
 
-import { SectionService, SectionServiceLive } from "./SectionService";
+import { SectionService } from "./SectionService";
 
 const run = <A, E>(program: Effect.Effect<A, E, SectionService>) =>
-  Effect.runPromise(program.pipe(Effect.provide(SectionServiceLive.pipe(Layer.provide(SectionRepositoryMemory)))));
+  Effect.runPromise(program.pipe(Effect.provide(SectionService.layer.pipe(Layer.provide(SectionRepositoryMemory)))));
 
 const unknownId = Schema.decodeSync(SectionId)("6f1c2a52-6a35-4d7e-9b51-0b8f0f1c9f3a");
 
