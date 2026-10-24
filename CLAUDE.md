@@ -15,7 +15,7 @@ Single-page checklist (sections of checkable items) behind a PIN. Next.js App Ro
 - shadcn atoms live in `src/shared/ui/primitives` and are imported only inside `src/shared/ui`.
 - Styling uses design tokens only: no raw colours (`bg-white`, `text-black`, palette shades), no arbitrary values.
 - Every user-facing string goes through i18n messages. Light and dark themes are both supported.
-- Boundaries (enforced by `oxlint.config.ts`): feature ↛ feature, service ↛ Drizzle, no Effect in UI components.
+- Boundaries (enforced by `oxlint.config.ts`): feature ↛ feature, service ↛ Drizzle, no Effect in UI components, no `../` imports in features and services. Repo-specific rules live in `lint/checkpoint-plugin.ts`.
 - Tests cover behaviour only (services on in-memory Layers, screens by role and text). No snapshots.
 
 ## PR workflow
