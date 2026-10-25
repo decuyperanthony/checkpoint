@@ -13,7 +13,7 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-error: var(--error);
   --color-error-foreground: var(--error-foreground);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-serif);
   --font-sans: var(--font-sans);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -43,62 +43,63 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-  --info: oklch(0.546 0.245 262.881);
+  /* Warm paper and ink, one pine accent: what is done, focused or primary. */
+  --background: oklch(0.982 0.006 85);
+  --foreground: oklch(0.23 0.012 65);
+  --card: oklch(0.997 0.002 85);
+  --card-foreground: oklch(0.23 0.012 65);
+  --popover: oklch(0.997 0.002 85);
+  --popover-foreground: oklch(0.23 0.012 65);
+  --primary: oklch(0.47 0.1 162);
+  --primary-foreground: oklch(0.985 0.01 160);
+  --secondary: oklch(0.95 0.008 85);
+  --secondary-foreground: oklch(0.28 0.012 65);
+  --muted: oklch(0.955 0.007 85);
+  --muted-foreground: oklch(0.52 0.012 70);
+  --accent: oklch(0.95 0.012 160);
+  --accent-foreground: oklch(0.3 0.05 162);
+  --destructive: oklch(0.56 0.19 28);
+  --border: oklch(0.91 0.009 80);
+  --input: oklch(0.89 0.01 80);
+  --ring: oklch(0.6 0.1 162);
+  --radius: 0.75rem;
+  --info: oklch(0.546 0.17 255);
   --info-foreground: oklch(0.985 0 0);
-  --success: oklch(0.527 0.154 150.069);
+  --success: oklch(0.52 0.12 158);
   --success-foreground: oklch(0.985 0 0);
-  --warning: oklch(0.555 0.163 48.998);
-  --warning-foreground: oklch(0.145 0 0);
+  --warning: oklch(0.6 0.15 60);
+  --warning-foreground: oklch(0.2 0.02 60);
   --error: var(--destructive);
   --error-foreground: oklch(0.985 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --info: oklch(0.707 0.165 254.624);
-  --info-foreground: oklch(0.145 0 0);
-  --success: oklch(0.723 0.219 149.579);
-  --success-foreground: oklch(0.145 0 0);
-  --warning: oklch(0.828 0.189 84.429);
-  --warning-foreground: oklch(0.145 0 0);
+  --background: oklch(0.165 0.008 70);
+  --foreground: oklch(0.93 0.008 85);
+  --card: oklch(0.2 0.008 70);
+  --card-foreground: oklch(0.93 0.008 85);
+  --popover: oklch(0.22 0.009 70);
+  --popover-foreground: oklch(0.93 0.008 85);
+  --primary: oklch(0.74 0.12 162);
+  --primary-foreground: oklch(0.18 0.03 162);
+  --secondary: oklch(0.26 0.009 70);
+  --secondary-foreground: oklch(0.93 0.008 85);
+  --muted: oklch(0.24 0.008 70);
+  --muted-foreground: oklch(0.68 0.012 80);
+  --accent: oklch(0.27 0.03 162);
+  --accent-foreground: oklch(0.9 0.04 160);
+  --destructive: oklch(0.68 0.17 25);
+  --border: oklch(1 0.01 85 / 9%);
+  --input: oklch(1 0.01 85 / 14%);
+  --ring: oklch(0.62 0.1 162);
+  --info: oklch(0.72 0.13 250);
+  --info-foreground: oklch(0.16 0.01 70);
+  --success: oklch(0.74 0.12 158);
+  --success-foreground: oklch(0.16 0.01 70);
+  --warning: oklch(0.8 0.14 80);
+  --warning-foreground: oklch(0.16 0.01 70);
   --error: var(--destructive);
-  --error-foreground: oklch(0.145 0 0);
+  --error-foreground: oklch(0.16 0.01 70);
 }
 
 @layer base {
@@ -106,7 +107,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
   html {
     @apply font-sans;
