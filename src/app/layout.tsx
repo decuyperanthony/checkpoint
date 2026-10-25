@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Instrument_Serif } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Atkinson_Hyperlegible_Next } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
@@ -11,13 +11,20 @@ import { Toaster } from "@/shared/ui/Toaster";
 
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-// Titles only: the app's name, sections, the PIN screen.
-const instrumentSerif = Instrument_Serif({ subsets: ["latin"], weight: "400", variable: "--font-serif" });
+// Signage type: drawn for legibility, one face at every level.
+const atkinson = Atkinson_Hyperlegible_Next({ subsets: ["latin", "latin-ext"], variable: "--font-sans" });
+
+// The browser chrome takes the ground of the current theme (signage white, night map).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fcfcfd" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c1016" },
+  ],
+};
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = await getTranslations("app");
-  return { title: t("title"), description: t("description") };
+  return { title: t("title"), description: t("description"), appleWebApp: { title: t("title"), capable: true } };
 };
 
 type RootLayoutProps = {
@@ -29,7 +36,7 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
 
   return (
     // next-themes sets the theme class before hydration, which React would otherwise report.
-    <html lang={locale} className={cn("font-sans", geist.variable, instrumentSerif.variable)} suppressHydrationWarning>
+    <html lang={locale} className={cn("font-sans", atkinson.variable)} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider>
           <ThemeProvider>

@@ -1,6 +1,5 @@
 "use client";
 
-import { LockKeyholeIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useSession } from "@/features/auth/api/auth";
@@ -14,7 +13,7 @@ const PinScreen = () => {
   const t = useTranslations("auth");
 
   return (
-    <Panel icon={LockKeyholeIcon} title={t("title")} description={t("description")}>
+    <Panel title={t("title")} description={t("description")}>
       <PinForm />
     </Panel>
   );

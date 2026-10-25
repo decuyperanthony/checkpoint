@@ -13,7 +13,19 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-error: var(--error);
   --color-error-foreground: var(--error-foreground);
-  --font-heading: var(--font-serif);
+  --font-heading: var(--font-sans);
+  --color-line-green: var(--line-green);
+  --color-line-green-foreground: var(--line-green-foreground);
+  --color-line-blue: var(--line-blue);
+  --color-line-blue-foreground: var(--line-blue-foreground);
+  --color-line-magenta: var(--line-magenta);
+  --color-line-magenta-foreground: var(--line-magenta-foreground);
+  --color-line-orange: var(--line-orange);
+  --color-line-orange-foreground: var(--line-orange-foreground);
+  --color-line-yellow: var(--line-yellow);
+  --color-line-yellow-foreground: var(--line-yellow-foreground);
+  --color-line-sky: var(--line-sky);
+  --color-line-sky-foreground: var(--line-sky-foreground);
   --font-sans: var(--font-sans);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -42,64 +54,89 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Metro signage: white enamel by day, the night map by night. Each section is a line in one of
+   six line colours, assigned by position; line 12's green leads and is also the primary colour. */
 :root {
-  /* Warm paper and ink, one pine accent: what is done, focused or primary. */
-  --background: oklch(0.982 0.006 85);
-  --foreground: oklch(0.23 0.012 65);
-  --card: oklch(0.997 0.002 85);
-  --card-foreground: oklch(0.23 0.012 65);
-  --popover: oklch(0.997 0.002 85);
-  --popover-foreground: oklch(0.23 0.012 65);
-  --primary: oklch(0.47 0.1 162);
-  --primary-foreground: oklch(0.985 0.01 160);
-  --secondary: oklch(0.95 0.008 85);
-  --secondary-foreground: oklch(0.28 0.012 65);
-  --muted: oklch(0.955 0.007 85);
-  --muted-foreground: oklch(0.52 0.012 70);
-  --accent: oklch(0.95 0.012 160);
-  --accent-foreground: oklch(0.3 0.05 162);
-  --destructive: oklch(0.56 0.19 28);
-  --border: oklch(0.91 0.009 80);
-  --input: oklch(0.89 0.01 80);
-  --ring: oklch(0.6 0.1 162);
-  --radius: 0.75rem;
-  --info: oklch(0.546 0.17 255);
-  --info-foreground: oklch(0.985 0 0);
-  --success: oklch(0.52 0.12 158);
-  --success-foreground: oklch(0.985 0 0);
-  --warning: oklch(0.6 0.15 60);
-  --warning-foreground: oklch(0.2 0.02 60);
+  --background: oklch(0.99 0.002 250);
+  --foreground: oklch(0.22 0.012 255);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.012 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.012 255);
+  --primary: oklch(0.5 0.11 162);
+  --primary-foreground: oklch(0.99 0.01 162);
+  --secondary: oklch(0.96 0.004 250);
+  --secondary-foreground: oklch(0.25 0.012 255);
+  --muted: oklch(0.96 0.004 250);
+  --muted-foreground: oklch(0.5 0.012 255);
+  --accent: oklch(0.95 0.025 162);
+  --accent-foreground: oklch(0.34 0.08 162);
+  --destructive: oklch(0.55 0.2 27);
+  --border: oklch(0.91 0.006 255);
+  --input: oklch(0.86 0.008 255);
+  --ring: oklch(0.5 0.11 162);
+  --radius: 0.625rem;
+  --info: oklch(0.45 0.16 262);
+  --info-foreground: oklch(0.99 0 0);
+  --success: oklch(0.5 0.11 162);
+  --success-foreground: oklch(0.99 0 0);
+  --warning: oklch(0.62 0.16 55);
+  --warning-foreground: oklch(0.2 0.02 55);
   --error: var(--destructive);
-  --error-foreground: oklch(0.985 0 0);
+  --error-foreground: oklch(0.99 0 0);
+  --line-green: oklch(0.5 0.11 162);
+  --line-green-foreground: oklch(0.99 0.01 162);
+  --line-blue: oklch(0.43 0.17 262);
+  --line-blue-foreground: oklch(0.99 0.01 262);
+  --line-magenta: oklch(0.48 0.18 352);
+  --line-magenta-foreground: oklch(0.99 0.01 352);
+  --line-orange: oklch(0.62 0.17 48);
+  --line-orange-foreground: oklch(0.2 0.03 48);
+  --line-yellow: oklch(0.64 0.13 80);
+  --line-yellow-foreground: oklch(0.2 0.03 80);
+  --line-sky: oklch(0.62 0.11 232);
+  --line-sky-foreground: oklch(0.2 0.03 232);
 }
 
 .dark {
-  --background: oklch(0.165 0.008 70);
-  --foreground: oklch(0.93 0.008 85);
-  --card: oklch(0.2 0.008 70);
-  --card-foreground: oklch(0.93 0.008 85);
-  --popover: oklch(0.22 0.009 70);
-  --popover-foreground: oklch(0.93 0.008 85);
-  --primary: oklch(0.74 0.12 162);
-  --primary-foreground: oklch(0.18 0.03 162);
-  --secondary: oklch(0.26 0.009 70);
-  --secondary-foreground: oklch(0.93 0.008 85);
-  --muted: oklch(0.24 0.008 70);
-  --muted-foreground: oklch(0.68 0.012 80);
-  --accent: oklch(0.27 0.03 162);
-  --accent-foreground: oklch(0.9 0.04 160);
+  --background: oklch(0.17 0.014 258);
+  --foreground: oklch(0.94 0.006 250);
+  --card: oklch(0.2 0.014 258);
+  --card-foreground: oklch(0.94 0.006 250);
+  --popover: oklch(0.22 0.016 258);
+  --popover-foreground: oklch(0.94 0.006 250);
+  --primary: oklch(0.7 0.12 162);
+  --primary-foreground: oklch(0.17 0.03 162);
+  --secondary: oklch(0.25 0.014 258);
+  --secondary-foreground: oklch(0.94 0.006 250);
+  --muted: oklch(0.24 0.014 258);
+  --muted-foreground: oklch(0.72 0.012 255);
+  --accent: oklch(0.28 0.035 162);
+  --accent-foreground: oklch(0.88 0.05 162);
   --destructive: oklch(0.68 0.17 25);
-  --border: oklch(1 0.01 85 / 9%);
-  --input: oklch(1 0.01 85 / 14%);
-  --ring: oklch(0.62 0.1 162);
-  --info: oklch(0.72 0.13 250);
-  --info-foreground: oklch(0.16 0.01 70);
-  --success: oklch(0.74 0.12 158);
-  --success-foreground: oklch(0.16 0.01 70);
-  --warning: oklch(0.8 0.14 80);
-  --warning-foreground: oklch(0.16 0.01 70);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.7 0.12 162);
+  --info: oklch(0.72 0.12 260);
+  --info-foreground: oklch(0.17 0.014 258);
+  --success: oklch(0.7 0.12 162);
+  --success-foreground: oklch(0.17 0.014 258);
+  --warning: oklch(0.8 0.14 75);
+  --warning-foreground: oklch(0.17 0.014 258);
   --error: var(--destructive);
-  --error-foreground: oklch(0.16 0.01 70);
+  --error-foreground: oklch(0.17 0.014 258);
+  --line-green: oklch(0.7 0.12 162);
+  --line-green-foreground: oklch(0.17 0.03 162);
+  --line-blue: oklch(0.68 0.14 262);
+  --line-blue-foreground: oklch(0.17 0.03 262);
+  --line-magenta: oklch(0.68 0.16 352);
+  --line-magenta-foreground: oklch(0.17 0.03 352);
+  --line-orange: oklch(0.76 0.15 52);
+  --line-orange-foreground: oklch(0.17 0.03 52);
+  --line-yellow: oklch(0.86 0.15 92);
+  --line-yellow-foreground: oklch(0.17 0.03 92);
+  --line-sky: oklch(0.79 0.09 228);
+  --line-sky-foreground: oklch(0.17 0.03 228);
 }
 
 @layer base {
@@ -111,6 +148,13 @@
   }
   html {
     @apply font-sans;
+    /* The parts the browser draws carry the palette too. */
+    caret-color: var(--primary);
+    accent-color: var(--primary);
+    scrollbar-color: var(--input) transparent;
+  }
+  ::selection {
+    background-color: color-mix(in oklch, var(--primary) 28%, transparent);
   }
 }
 

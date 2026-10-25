@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "Checkpoint",
-    "description": "Une checklist unique, organisée en sections."
+    "title": "Correspondance",
+    "description": "Une checklist unique, tracée comme un plan de métro : chaque section est une ligne, chaque élément une station."
   },
   "theme": {
     "toggle": "Basculer entre thème clair et sombre"
@@ -41,7 +41,7 @@
     "logout": "Se déconnecter",
     "tooManyAttempts": "Trop de tentatives. Réessaie dans {minutes, plural, one {# minute} other {# minutes}}.",
     "title": "Entre ton code",
-    "description": "Checkpoint est protégé par un code PIN."
+    "description": "Correspondance est protégée par un code PIN."
   },
   "sections": {
     "empty": "Aucune section pour l'instant.",

@@ -142,6 +142,8 @@ describe("Board items", () => {
 
     await userEvent.click(item);
     expect(screen.getByRole("checkbox", { name: "Lait" })).toBeChecked();
+    // The line's progress moves with the station, before the API answers too.
+    expect(screen.getByText("1 sur 1 cochés dans Courses")).toBeInTheDocument();
     answer();
 
     await userEvent.click(screen.getByRole("checkbox", { name: "Lait" }));

@@ -1,5 +1,4 @@
-import { useMutation, usePrefetchQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { startTransition, useOptimistic } from "react";
+import { useMutation, usePrefetchQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 import type { Item, UpdateItemPayload } from "@/contract/schemas/Item";
 import type { SectionId } from "@/contract/schemas/Section";
@@ -37,20 +36,27 @@ export const useUpdateItem = () => {
   });
 };
 
-// Checks or unchecks an item at once, without waiting for the API. The box shows the new state
-// until the change is saved and the list refetched, and goes back if the change fails.
-export const useCheckItem = (item: Item) => {
-  const update = useUpdateItem();
-  const [done, setOptimisticDone] = useOptimistic(item.done);
-
-  const check = (next: Item["done"]) =>
-    startTransition(async () => {
-      setOptimisticDone(next);
-      // A failure already reaches the user through the mutation cache: only the box goes back.
-      await update.mutateAsync({ id: item.id, changes: { done: next } }).catch(() => undefined);
-    });
-
-  return { done, check };
+// Checks or unchecks an item at once, in the shared list: the station, the legs around it and
+// its line's progress all change together. A failure puts the list back and the error toast
+// says why; either way the list is refetched.
+export const useCheckItem = () => {
+  const queryClient = useQueryClient();
+  const invalidate = useInvalidate(queryKeys.items);
+  return useMutation({
+    mutationFn: ({ id, done }: Pick<Item, "id" | "done">) =>
+      callApi((api) => api.items.update({ params: { id }, payload: { done } })),
+    onMutate: async ({ id, done }) => {
+      // A refetch already in flight would overwrite the change with the old state.
+      await queryClient.cancelQueries({ queryKey: queryKeys.items });
+      const previous = queryClient.getQueryData<ReadonlyArray<Item>>(queryKeys.items);
+      queryClient.setQueryData<ReadonlyArray<Item>>(queryKeys.items, (items) =>
+        items?.map((item) => (item.id === id ? { ...item, done } : item)),
+      );
+      return { previous };
+    },
+    onError: (_error, _variables, context) => queryClient.setQueryData(queryKeys.items, context?.previous),
+    onSettled: invalidate,
+  });
 };
 
 export const useRemoveItem = () => {

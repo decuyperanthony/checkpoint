@@ -22,8 +22,6 @@ export const SectionProgress = ({ section }: SectionProgressProps) => {
 
   return (
     <Progress
-      done={done}
-      total={total}
       label={t("progressLabel", { done, total, section: section.title })}
       summary={t("progress", { done, total })}
     />

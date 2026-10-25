@@ -146,7 +146,7 @@ const form = SectionForm.useForm({ defaultValues: { title: "" } });
   (`satisfies TokenClasses<Size>`): a size that is not a token does not compile.
 - **Design tokens only** (enforced by `checkpoint/design-tokens`): no raw colours, palette shades or
   arbitrary values. Light and dark themes come for free.
-- **No raw text elements in features**: `Text`, `Stack`, `IconTitle`… carry the styles and the
+- **No raw text elements in features**: `Text`, `Stack`, `Title`, `Line`… carry the styles and the
   semantics (`as`, roles).
 
 ## i18n

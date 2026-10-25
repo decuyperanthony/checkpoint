@@ -12,19 +12,23 @@ import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { ActionsMenu } from "@/shared/ui/ActionsMenu";
 import { Checkbox } from "@/shared/ui/Checkbox";
 import { RemoveDialog } from "@/shared/ui/RemoveDialog";
-import { Row } from "@/shared/ui/Row";
+import { Row, type Leg } from "@/shared/ui/Row";
+import type { LineColor } from "@/shared/ui/tokens";
 
 type ItemRowProps = {
   item: Item;
   // Its section's title, so that rows with the same text in two sections have distinct names.
   sectionTitle: Section["title"];
+  color: LineColor;
+  // The leg arriving at this station: travelled when the station before it is checked.
+  arriving: Leg;
 };
 
-export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
+export const ItemRow = ({ item, sectionTitle, color, arriving }: ItemRowProps) => {
   const t = useTranslations();
   const { editing, triggerRef, open, close } = useInlineEdit();
   const [removing, setRemoving] = useState(false);
-  const { done, check } = useCheckItem(item);
+  const checkItem = useCheckItem();
   const remove = useRemoveItem();
 
   if (editing) {
@@ -33,6 +37,7 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
 
   return (
     <Row
+      rail={{ color, in: arriving, out: item.done ? "travelled" : "ahead" }}
       actions={
         <ActionsMenu label={t("items.menu", { content: item.content, section: sectionTitle })} triggerRef={triggerRef}>
           <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
@@ -45,7 +50,13 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
         </ActionsMenu>
       }
     >
-      <Checkbox label={item.content} checked={done} checkedStyle="strikethrough" onCheckedChange={check} />
+      <Checkbox
+        label={item.content}
+        checked={item.done}
+        checkedStyle="strikethrough"
+        station={color}
+        onCheckedChange={(done) => checkItem.mutate({ id: item.id, done })}
+      />
       <RemoveDialog
         name={item.content}
         description={t("items.removeDescription")}
