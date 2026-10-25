@@ -12,7 +12,7 @@ import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { ActionsMenu } from "@/shared/ui/ActionsMenu";
 import { Checkbox } from "@/shared/ui/Checkbox";
 import { RemoveDialog } from "@/shared/ui/RemoveDialog";
-import { Stack } from "@/shared/ui/Stack";
+import { Row } from "@/shared/ui/Row";
 
 type ItemRowProps = {
   item: Item;
@@ -32,17 +32,20 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
   }
 
   return (
-    <Stack direction="row" justify="between">
+    <Row
+      actions={
+        <ActionsMenu label={t("items.menu", { content: item.content, section: sectionTitle })} triggerRef={triggerRef}>
+          <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
+            {t("actions.edit")}
+          </ActionsMenu.Item>
+          <ActionsMenu.Separator />
+          <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
+            {t("actions.remove")}
+          </ActionsMenu.Item>
+        </ActionsMenu>
+      }
+    >
       <Checkbox label={item.content} checked={done} checkedStyle="strikethrough" onCheckedChange={check} />
-      <ActionsMenu label={t("items.menu", { content: item.content, section: sectionTitle })} triggerRef={triggerRef}>
-        <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
-          {t("actions.edit")}
-        </ActionsMenu.Item>
-        <ActionsMenu.Separator />
-        <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
-          {t("actions.remove")}
-        </ActionsMenu.Item>
-      </ActionsMenu>
       <RemoveDialog
         name={item.content}
         description={t("items.removeDescription")}
@@ -51,6 +54,6 @@ export const ItemRow = ({ item, sectionTitle }: ItemRowProps) => {
         returnFocusTo={triggerRef}
         onConfirm={() => remove.mutate(item.id)}
       />
-    </Stack>
+    </Row>
   );
 };

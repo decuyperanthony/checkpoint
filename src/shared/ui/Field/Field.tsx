@@ -47,7 +47,7 @@ export const Field = ({
   error,
   children,
 }: FieldLayoutProps) => (
-  <div className="flex flex-col gap-2">
+  <div className="flex min-w-0 flex-1 flex-col gap-2">
     <Label htmlFor={id} className={labelVisibility === "hidden" ? "sr-only" : undefined}>
       {label}
     </Label>

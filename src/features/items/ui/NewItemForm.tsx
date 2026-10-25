@@ -6,7 +6,9 @@ import { CreateItemPayload } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
 import { useCreateItem } from "@/features/items/api/items";
 import { createForm } from "@/shared/form";
-import { Button } from "@/shared/ui/Button";
+import { PlusIcon } from "lucide-react";
+
+import { IconButton } from "@/shared/ui/IconButton";
 import { Stack } from "@/shared/ui/Stack";
 
 const ItemForm = createForm(CreateItemPayload);
@@ -34,15 +36,15 @@ export const NewItemForm = ({ section }: NewItemFormProps) => {
 
   return (
     <ItemForm form={form} onSubmit={add}>
-      <Stack direction="row">
+      <Stack direction="row" gap="sm">
+        <IconButton type="submit" icon={PlusIcon} label={t("actions.add")} size="sm" disabled={create.isPending} />
         <ItemForm.TextField
           name="content"
           label={t("items.newContent", { section: section.title })}
           labelVisibility="hidden"
+          placeholder={t("items.newPlaceholder")}
+          appearance="ghost"
         />
-        <Button type="submit" disabled={create.isPending}>
-          {t("actions.add")}
-        </Button>
       </Stack>
     </ItemForm>
   );

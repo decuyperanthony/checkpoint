@@ -2,6 +2,7 @@
 
 import { usePrefetchItems } from "@/features/items/api/items";
 import { ItemList } from "@/features/items/ui/ItemList";
+import { SectionProgress } from "@/features/items/ui/SectionProgress";
 import { useSections } from "@/features/sections/api/sections";
 import { NewSectionForm } from "@/features/sections/ui/NewSectionForm";
 import { NoSections } from "@/features/sections/ui/NoSections";
@@ -15,10 +16,10 @@ const Sections = () => {
   const { data: sections } = useSections();
 
   return (
-    <Stack gap="xl">
+    <Stack gap="lg">
       {sections.length === 0 ? <NoSections /> : null}
       {sections.map((section) => (
-        <SectionCard key={section.id} section={section}>
+        <SectionCard key={section.id} section={section} aside={<SectionProgress section={section} />}>
           <ItemList section={section} />
         </SectionCard>
       ))}

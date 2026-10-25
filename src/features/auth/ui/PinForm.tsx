@@ -42,13 +42,16 @@ export const PinForm = () => {
         <LoginForm.TextField
           name="pin"
           label={t("pin")}
+          labelVisibility="hidden"
           hint={t("pinHint")}
+          align="center"
           type="password"
           inputMode="numeric"
           autoComplete="current-password"
+          size="xl"
           focusOnMount
         />
-        <Button type="submit" disabled={login.isPending}>
+        <Button type="submit" size="xl" disabled={login.isPending}>
           {t("unlock")}
         </Button>
       </Stack>

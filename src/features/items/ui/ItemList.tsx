@@ -14,7 +14,7 @@ export const ItemList = ({ section }: ItemListProps) => {
   const { data: items } = useItems();
 
   return (
-    <Stack>
+    <Stack gap="sm">
       {items
         .filter((item) => item.sectionId === section.id)
         .map((item) => (
