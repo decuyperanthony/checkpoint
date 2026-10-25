@@ -5,5 +5,7 @@ import type { ApiError } from "@/shared/lib/api";
 declare module "@tanstack/react-query" {
   interface Register {
     defaultError: ApiError;
+    // `toast: false` for a mutation that shows its errors itself, like a form.
+    mutationMeta: { toast?: boolean };
   }
 }

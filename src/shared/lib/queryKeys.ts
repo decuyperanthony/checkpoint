@@ -3,4 +3,6 @@
 export const queryKeys = {
   sections: ["sections"],
   items: ["items"],
+  // "open" or "locked": whether the screen shows the board or the PIN.
+  session: ["session"],
 } as const;

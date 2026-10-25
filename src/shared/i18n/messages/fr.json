@@ -34,6 +34,13 @@
     "sessionExpired": "Ta session a expiré. Saisis à nouveau ton code PIN.",
     "unexpected": "Une erreur est survenue. Réessaie dans un instant."
   },
+  "auth": {
+    "pin": "Code PIN",
+    "pinHint": "4 à 12 chiffres",
+    "unlock": "Déverrouiller",
+    "logout": "Se déconnecter",
+    "tooManyAttempts": "Trop de tentatives. Réessaie dans {minutes, plural, one {# minute} other {# minutes}}."
+  },
   "sections": {
     "empty": "Aucune section pour l'instant.",
     "newTitle": "Nouvelle section",

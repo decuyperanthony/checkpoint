@@ -24,4 +24,12 @@ describe("TextField", () => {
 
     expect(screen.getByRole("textbox", { name: "Section title" })).toBeValid();
   });
+
+  it("describes itself with its hint, then with its error too", () => {
+    const { rerender } = render(<TextField label="PIN" hint="4 to 12 digits" />);
+    expect(screen.getByRole("textbox", { name: "PIN" })).toHaveAccessibleDescription("4 to 12 digits");
+
+    rerender(<TextField label="PIN" hint="4 to 12 digits" error="Wrong PIN" />);
+    expect(screen.getByRole("textbox", { name: "PIN" })).toHaveAccessibleDescription("4 to 12 digits Wrong PIN");
+  });
 });

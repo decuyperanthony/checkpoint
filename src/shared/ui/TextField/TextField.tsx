@@ -26,13 +26,14 @@ type TextFieldProps = Omit<
 export const TextField = ({
   label,
   labelVisibility,
+  hint,
   error,
   size,
   focusOnMount = false,
   ref,
   ...props
 }: TextFieldProps) => {
-  const { field, control } = useField(error);
+  const { field, control } = useField({ hint, error });
   const focused = useRef(false);
   const inputRef = (element: HTMLInputElement | null) => {
     if (typeof ref === "function") ref(element);
@@ -43,7 +44,7 @@ export const TextField = ({
   };
 
   return (
-    <Field {...field} label={label} labelVisibility={labelVisibility} error={error}>
+    <Field {...field} label={label} labelVisibility={labelVisibility} hint={hint} error={error}>
       <Input {...props} {...control} ref={inputRef} className={input({ size })} />
     </Field>
   );
