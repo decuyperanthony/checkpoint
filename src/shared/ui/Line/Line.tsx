@@ -18,25 +18,16 @@ const badge = cva("-ml-1 grid size-7 shrink-0 place-items-center rounded-full te
 });
 
 type LineBadgeProps = {
-  // Without a colour, the badge of a line not opened yet: dashed, with a plus.
-  color?: LineColor | undefined;
-  children?: ReactNode;
+  color: LineColor;
+  children: ReactNode;
 };
 
 // The round badge naming a line, like a metro line's number. Decorative: the line's name says it.
-export const LineBadge = ({ color, children }: LineBadgeProps) =>
-  color === undefined ? (
-    <span
-      aria-hidden
-      className="-ml-1 grid size-7 shrink-0 place-items-center rounded-full border-2 border-dashed border-input text-muted-foreground"
-    >
-      <PlusIcon className="size-4" />
-    </span>
-  ) : (
-    <span aria-hidden className={badge({ color })}>
-      {children}
-    </span>
-  );
+export const LineBadge = ({ color, children }: LineBadgeProps) => (
+  <span aria-hidden className={badge({ color })}>
+    {children}
+  </span>
+);
 
 type LineProps = {
   color: LineColor;
@@ -69,21 +60,49 @@ export const Line = ({ color, number, header, aside, actions, children }: LinePr
   </section>
 );
 
-// Where the next station goes: a dashed ring on the track, in front of the field that adds it.
-export const NextStation = () => (
-  <span
-    aria-hidden
-    className="relative grid size-5 shrink-0 place-items-center rounded-full border-2 border-dashed border-input bg-background text-muted-foreground"
+// The control that adds what is being typed: drawn as a dashed outline of the thing it makes,
+// with a hit area of at least 44px around it for a thumb.
+const adder =
+  "relative grid shrink-0 place-items-center rounded-full border-dashed border-input bg-background text-muted-foreground transition-colors outline-none after:absolute hover:border-primary hover:text-primary focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50";
+
+type AddButtonProps = {
+  // What it adds, for assistive technologies: "Ajouter la station à la ligne Courses".
+  label: string;
+  disabled?: boolean;
+};
+
+// Where the next station goes: a dashed ring on the track that submits the field beside it.
+export const NextStation = ({ label, disabled = false }: AddButtonProps) => (
+  <button
+    type="submit"
+    aria-label={label}
+    title={label}
+    disabled={disabled}
+    className={`${adder} size-5 border-2 after:-inset-3`}
   >
-    <PlusIcon className="size-3" />
-  </span>
+    <PlusIcon aria-hidden className="size-3" />
+  </button>
 );
 
-// A line not opened yet: the dashed badge on the start of a dashed track, then the field naming it.
-export const OpenLine = ({ children }: { children: ReactNode }) => (
+type OpenLineProps = AddButtonProps & {
+  // The field naming the new line.
+  children: ReactNode;
+};
+
+// A line not opened yet: the dashed badge, which submits, on the start of a dashed track, then the
+// field naming it.
+export const OpenLine = ({ label, disabled = false, children }: OpenLineProps) => (
   <div className="flex flex-col">
     <div className="flex min-h-11 items-center gap-3">
-      <LineBadge />
+      <button
+        type="submit"
+        aria-label={label}
+        title={label}
+        disabled={disabled}
+        className={`${adder} -ml-1 size-7 border-2 after:-inset-2`}
+      >
+        <PlusIcon aria-hidden className="size-4" />
+      </button>
       {children}
     </div>
     <span aria-hidden className="ml-2 h-8 w-0 border-l-4 border-dashed border-input" />
