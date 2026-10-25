@@ -6,18 +6,20 @@ import { CreateItemPayload } from "@/contract/schemas/Item";
 import type { Section } from "@/contract/schemas/Section";
 import { useCreateItem } from "@/features/items/api/items";
 import { createForm } from "@/shared/form";
-import { PlusIcon } from "lucide-react";
-
-import { IconButton } from "@/shared/ui/IconButton";
-import { Stack } from "@/shared/ui/Stack";
+import { NextStation } from "@/shared/ui/Line";
+import { Row, type Leg } from "@/shared/ui/Row";
+import type { LineColor } from "@/shared/ui/tokens";
 
 const ItemForm = createForm(CreateItemPayload);
 
 type NewItemFormProps = {
   section: Pick<Section, "id" | "title">;
+  color: LineColor;
+  // The leg arriving from the line's last station.
+  arriving: Leg;
 };
 
-export const NewItemForm = ({ section }: NewItemFormProps) => {
+export const NewItemForm = ({ section, color, arriving }: NewItemFormProps) => {
   const t = useTranslations();
   const create = useCreateItem();
   const form = ItemForm.useForm({ defaultValues: { content: "" } });
@@ -36,8 +38,8 @@ export const NewItemForm = ({ section }: NewItemFormProps) => {
 
   return (
     <ItemForm form={form} onSubmit={add}>
-      <Stack direction="row" gap="sm">
-        <IconButton type="submit" icon={PlusIcon} label={t("actions.add")} size="sm" disabled={create.isPending} />
+      <Row rail={{ color, in: arriving, out: "none" }}>
+        <NextStation />
         <ItemForm.TextField
           name="content"
           label={t("items.newContent", { section: section.title })}
@@ -45,7 +47,7 @@ export const NewItemForm = ({ section }: NewItemFormProps) => {
           placeholder={t("items.newPlaceholder")}
           appearance="ghost"
         />
-      </Stack>
+      </Row>
     </ItemForm>
   );
 };

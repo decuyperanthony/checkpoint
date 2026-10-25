@@ -36,7 +36,7 @@ describe("AuthGate", () => {
     const field = await pinField();
     expect(field).toHaveFocus();
     expect(field).toHaveAccessibleDescription("4 à 12 chiffres");
-    expect(screen.queryByRole("textbox", { name: "Nouvelle section" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Nouvelle ligne" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Se déconnecter" })).not.toBeInTheDocument();
   });
 
@@ -77,23 +77,23 @@ describe("AuthGate", () => {
     renderApp();
 
     await unlock(testPin);
-    expect(await screen.findByRole("textbox", { name: "Nouvelle section" })).toBeInTheDocument();
+    expect(await screen.findByRole("textbox", { name: "Nouvelle ligne" })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Se déconnecter" }));
 
     expect(await pinField()).toBeInTheDocument();
-    expect(screen.queryByRole("textbox", { name: "Nouvelle section" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Nouvelle ligne" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Se déconnecter" })).not.toBeInTheDocument();
   });
 
   it("goes back to the PIN when the session expires while in use", async () => {
     renderApp();
     await unlock(testPin);
-    await userEvent.type(await screen.findByRole("textbox", { name: "Nouvelle section" }), "Courses{Enter}");
+    await userEvent.type(await screen.findByRole("textbox", { name: "Nouvelle ligne" }), "Courses{Enter}");
     await screen.findByRole("heading", { name: "Courses" });
 
     fakeApi.expireSession();
-    await userEvent.type(screen.getByRole("textbox", { name: "Nouvel élément dans Courses" }), "Lait{Enter}");
+    await userEvent.type(screen.getByRole("textbox", { name: "Nouvelle station sur la ligne Courses" }), "Lait{Enter}");
 
     expect(await pinField()).toBeInTheDocument();
     expect(screen.queryByText("Ta session a expiré. Saisis à nouveau ton code PIN.")).not.toBeInTheDocument();

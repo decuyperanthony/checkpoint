@@ -1,19 +1,14 @@
-import { Progress as PrimitiveProgress } from "@/shared/ui/primitives/progress";
-
 type ProgressProps = {
-  done: number;
-  total: number;
-  // Read by assistive technologies: "3 sur 7 cochés".
+  // Read by assistive technologies: "3 stations parcourues sur 7, ligne Courses".
   label: string;
-  // Shown next to the bar: "3/7".
+  // Shown beside the line's name: "3/7". The travelled track already draws the rest.
   summary: string;
 };
 
-export const Progress = ({ done, total, label, summary }: ProgressProps) => (
-  <div className="flex shrink-0 items-center gap-2">
-    <PrimitiveProgress value={total === 0 ? 0 : (done / total) * 100} aria-label={label} className="w-14" />
-    <span aria-hidden className="text-xs text-muted-foreground tabular-nums">
-      {summary}
-    </span>
-  </div>
+// How far a line has travelled, as a count.
+export const Progress = ({ label, summary }: ProgressProps) => (
+  <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+    <span aria-hidden>{summary}</span>
+    <span className="sr-only">{label}</span>
+  </span>
 );

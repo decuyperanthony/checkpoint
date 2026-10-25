@@ -8,10 +8,9 @@ const headings = { 2: "h2", 3: "h3", 4: "h4" } as const;
 
 type HeadingLevel = keyof typeof headings;
 
-// The serif heading font has a single weight: size makes the hierarchy.
-const title = cva("flex min-w-0 items-center gap-2 font-heading leading-tight tracking-tight", {
+const title = cva("flex min-w-0 items-center gap-2 font-heading leading-tight font-bold tracking-tight", {
   variants: {
-    size: { sm: "text-lg", md: "text-xl", lg: "text-2xl", xl: "text-3xl" } satisfies TokenClasses<Size>,
+    size: { sm: "text-base", md: "text-lg", lg: "text-xl", xl: "text-2xl" } satisfies TokenClasses<Size>,
   },
   defaultVariants: { size: "lg" },
 });

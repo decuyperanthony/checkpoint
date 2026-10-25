@@ -5,11 +5,7 @@ import { useTranslations } from "next-intl";
 import { SectionTitlePayload } from "@/contract/schemas/Section";
 import { useCreateSection } from "@/features/sections/api/sections";
 import { createForm } from "@/shared/form";
-import { PlusIcon } from "lucide-react";
-
-import { Card } from "@/shared/ui/Card";
-import { IconButton } from "@/shared/ui/IconButton";
-import { Stack } from "@/shared/ui/Stack";
+import { OpenLine } from "@/shared/ui/Line";
 
 const SectionForm = createForm(SectionTitlePayload);
 
@@ -28,19 +24,16 @@ export const NewSectionForm = () => {
     });
 
   return (
-    <Card variant="dashed">
-      <SectionForm form={form} onSubmit={add}>
-        <Stack direction="row" gap="sm">
-          <IconButton type="submit" icon={PlusIcon} label={t("actions.add")} size="sm" disabled={create.isPending} />
-          <SectionForm.TextField
-            name="title"
-            label={t("sections.newTitle")}
-            labelVisibility="hidden"
-            placeholder={t("sections.newPlaceholder")}
-            appearance="ghost"
-          />
-        </Stack>
-      </SectionForm>
-    </Card>
+    <SectionForm form={form} onSubmit={add}>
+      <OpenLine>
+        <SectionForm.TextField
+          name="title"
+          label={t("sections.newTitle")}
+          labelVisibility="hidden"
+          placeholder={t("sections.newPlaceholder")}
+          appearance="ghost"
+        />
+      </OpenLine>
+    </SectionForm>
   );
 };

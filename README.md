@@ -1,6 +1,8 @@
 # checkpoint
 
-A single-page checklist: titled sections containing checkable items, behind a PIN code. Built as a reference codebase for [Effect](https://effect.website) on a Next.js server.
+**Correspondance**: a single-page checklist drawn as a metro map, where sections are lines and items are their stations, behind a PIN code. Built as a reference codebase for [Effect](https://effect.website) on a Next.js server.
+
+Product and design records: [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md).
 
 ## Stack
 

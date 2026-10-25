@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full-bleed line 12 green: launchers crop maskable icons to their own shape. The check stays
+       inside the safe zone, the centred circle of radius 205 (80% of the width). -->
+  <rect width="512" height="512" fill="#00764f"/>
+  <path d="M168 266l60 60L344 196" fill="none" stroke="#ffffff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

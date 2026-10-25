@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Correspondance: a metro line roundel holding a check, in line 12's green. -->
+  <circle cx="32" cy="32" r="30" fill="#00764f"/>
+  <path d="M19 33.5l8.5 8.5L45.5 23" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
