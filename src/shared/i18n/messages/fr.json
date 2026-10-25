@@ -39,19 +39,26 @@
     "pinHint": "4 à 12 chiffres",
     "unlock": "Déverrouiller",
     "logout": "Se déconnecter",
-    "tooManyAttempts": "Trop de tentatives. Réessaie dans {minutes, plural, one {# minute} other {# minutes}}."
+    "tooManyAttempts": "Trop de tentatives. Réessaie dans {minutes, plural, one {# minute} other {# minutes}}.",
+    "title": "Entre ton code",
+    "description": "Checkpoint est protégé par un code PIN."
   },
   "sections": {
     "empty": "Aucune section pour l'instant.",
     "newTitle": "Nouvelle section",
     "title": "Titre de la section {title}",
     "menu": "Actions de la section {title}",
-    "removeDescription": "La section et tous ses éléments seront supprimés définitivement."
+    "removeDescription": "La section et tous ses éléments seront supprimés définitivement.",
+    "newPlaceholder": "Nouvelle section",
+    "emptyHint": "Crée ta première section juste en dessous."
   },
   "items": {
     "newContent": "Nouvel élément dans {section}",
     "content": "Texte de l'élément {content} dans {section}",
     "menu": "Actions de l'élément {content} dans {section}",
-    "removeDescription": "L'élément sera supprimé définitivement."
+    "removeDescription": "L'élément sera supprimé définitivement.",
+    "newPlaceholder": "Ajouter un élément",
+    "progress": "{done}/{total}",
+    "progressLabel": "{done} sur {total} cochés dans {section}"
   }
 }
