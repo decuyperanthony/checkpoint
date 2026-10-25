@@ -39,13 +39,14 @@ export const NewItemForm = ({ section, color, arriving }: NewItemFormProps) => {
   return (
     <ItemForm form={form} onSubmit={add}>
       <Row rail={{ color, in: arriving, out: "none" }}>
-        <NextStation />
+        <NextStation label={t("items.addButton", { section: section.title })} disabled={create.isPending} />
         <ItemForm.TextField
           name="content"
           label={t("items.newContent", { section: section.title })}
           labelVisibility="hidden"
           placeholder={t("items.newPlaceholder")}
           appearance="ghost"
+          enterKeyHint="done"
         />
       </Row>
     </ItemForm>

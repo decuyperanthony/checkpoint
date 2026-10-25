@@ -50,7 +50,8 @@
     "menu": "Actions de la ligne {title}",
     "removeDescription": "La ligne et toutes ses stations seront supprimées définitivement.",
     "newPlaceholder": "Nouvelle ligne",
-    "emptyHint": "Trace ta première ligne juste en dessous."
+    "emptyHint": "Trace ta première ligne juste en dessous.",
+    "addButton": "Ajouter la ligne"
   },
   "items": {
     "newContent": "Nouvelle station sur la ligne {section}",
@@ -61,6 +62,7 @@
     "progress": "{done}/{total}",
     "progressLabel": "{done, plural, =0 {Aucune station parcourue} one {# station parcourue} other {# stations parcourues}} sur {total}, ligne {section}",
     "empty": "0 station",
-    "emptyLabel": "Aucune station sur la ligne {section}"
+    "emptyLabel": "Aucune station sur la ligne {section}",
+    "addButton": "Ajouter la station à la ligne {section}"
   }
 }

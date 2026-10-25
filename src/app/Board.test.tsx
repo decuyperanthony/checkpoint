@@ -47,6 +47,15 @@ const addItem = async (section: string, content: string) => {
 };
 
 describe("Board sections", () => {
+  it("adds a line by tapping the dashed badge, not only with Enter", async () => {
+    renderScreen(<Board />);
+
+    await userEvent.type(await screen.findByRole("textbox", { name: "Nouvelle ligne" }), "Courses");
+    await userEvent.click(screen.getByRole("button", { name: "Ajouter la ligne" }));
+
+    expect(await screen.findByRole("heading", { name: "Courses" })).toBeInTheDocument();
+  });
+
   it("says when there is no section yet", async () => {
     renderScreen(<Board />);
 
@@ -117,6 +126,17 @@ describe("Board sections", () => {
 });
 
 describe("Board items", () => {
+  it("adds a station by tapping the dashed station, not only with Enter", async () => {
+    renderScreen(<Board />);
+    await addSection("Courses");
+
+    await userEvent.type(screen.getByRole("textbox", { name: "Nouvelle station sur la ligne Courses" }), "Lait");
+    await userEvent.click(screen.getByRole("button", { name: "Ajouter la station à la ligne Courses" }));
+
+    expect(await screen.findByRole("checkbox", { name: "Lait" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Nouvelle station sur la ligne Courses" })).toHaveValue("");
+  });
+
   it("counts a line's stations: none yet, then how many are travelled", async () => {
     renderScreen(<Board />);
     await addSection("Courses");

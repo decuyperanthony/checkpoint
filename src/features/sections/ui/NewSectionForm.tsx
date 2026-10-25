@@ -25,13 +25,14 @@ export const NewSectionForm = () => {
 
   return (
     <SectionForm form={form} onSubmit={add}>
-      <OpenLine>
+      <OpenLine label={t("sections.addButton")} disabled={create.isPending}>
         <SectionForm.TextField
           name="title"
           label={t("sections.newTitle")}
           labelVisibility="hidden"
           placeholder={t("sections.newPlaceholder")}
           appearance="ghost"
+          enterKeyHint="done"
         />
       </OpenLine>
     </SectionForm>
