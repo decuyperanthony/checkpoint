@@ -20,3 +20,10 @@ next-env.d.ts
 *.key
 credentials.json
 service-account.json
+
+# Impeccable working files (decision sketches, review captures, question state); the product
+# record, DESIGN.md, design.json and the surface briefs are committed.
+/.impeccable/mocks/
+/.impeccable/review/
+/.impeccable/questions/
+/.impeccable/config.local.json
