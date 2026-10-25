@@ -10,7 +10,7 @@ type SectionProgressProps = {
   section: Pick<Section, "id" | "title">;
 };
 
-// How much of a section is done; nothing for an empty one.
+// How far a line has travelled; an empty line says it has no station yet.
 export const SectionProgress = ({ section }: SectionProgressProps) => {
   const t = useTranslations("items");
   const { data: items } = useItems();
@@ -18,7 +18,7 @@ export const SectionProgress = ({ section }: SectionProgressProps) => {
   const done = inSection.filter((item) => item.done).length;
   const total = inSection.length;
 
-  if (total === 0) return null;
+  if (total === 0) return <Progress label={t("emptyLabel", { section: section.title })} summary={t("empty")} />;
 
   return (
     <Progress

@@ -165,6 +165,7 @@ One face, Atkinson Hyperlegible Next, carries every level. Hierarchy comes from 
 - Flat signage on a white or night-map ground; no cards, no shadows at rest.
 - One legible sans at every level; rank by weight and size.
 - Not-yet-made things are dashed outlines with a plus.
+- The copy speaks the map: lines, stations, travelled ("Ajouter une station", "Nouvelle ligne", "0 station"), with plain verbs for actions (Renommer, Modifier, Supprimer).
 
 ## Colors
 
@@ -264,7 +265,7 @@ Quiet, compact, inherited from the shadcn atom but routed through `Button` and `
 ### Inputs / Fields
 
 - **Outline:** Enamel Card fill, 1px Field Edge stroke, 10px radius; in dark, a 30% translucent fill.
-- **Ghost:** borderless and transparent until hovered (Platform Grey 60%) or focused (card fill): the inline "Ajouter un élément" and "Nouvelle section" fields, which sit in the track.
+- **Ghost:** borderless and transparent until hovered (Platform Grey 60%) or focused (card fill): the inline "Ajouter une station" and "Nouvelle ligne" fields, which sit in the track.
 - **PIN:** outline, 48px tall, text centred with the widest tracking.
 - **Focus:** green border plus 3px green ring at 50%. **Error:** red border and 3px red ring at 20%, message announced with the field.
 

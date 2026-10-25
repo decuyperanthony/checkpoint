@@ -1,5 +1,5 @@
 type ProgressProps = {
-  // Read by assistive technologies: "3 sur 7 cochés dans Courses".
+  // Read by assistive technologies: "3 stations parcourues sur 7, ligne Courses".
   label: string;
   // Shown beside the line's name: "3/7". The travelled track already draws the rest.
   summary: string;

@@ -44,21 +44,23 @@
     "description": "Correspondance est protégée par un code PIN."
   },
   "sections": {
-    "empty": "Aucune section pour l'instant.",
-    "newTitle": "Nouvelle section",
-    "title": "Titre de la section {title}",
-    "menu": "Actions de la section {title}",
-    "removeDescription": "La section et tous ses éléments seront supprimés définitivement.",
-    "newPlaceholder": "Nouvelle section",
-    "emptyHint": "Crée ta première section juste en dessous."
+    "empty": "Aucune ligne pour l'instant.",
+    "newTitle": "Nouvelle ligne",
+    "title": "Nom de la ligne {title}",
+    "menu": "Actions de la ligne {title}",
+    "removeDescription": "La ligne et toutes ses stations seront supprimées définitivement.",
+    "newPlaceholder": "Nouvelle ligne",
+    "emptyHint": "Trace ta première ligne juste en dessous."
   },
   "items": {
-    "newContent": "Nouvel élément dans {section}",
-    "content": "Texte de l'élément {content} dans {section}",
-    "menu": "Actions de l'élément {content} dans {section}",
-    "removeDescription": "L'élément sera supprimé définitivement.",
-    "newPlaceholder": "Ajouter un élément",
+    "newContent": "Nouvelle station sur la ligne {section}",
+    "content": "Nom de la station {content} sur la ligne {section}",
+    "menu": "Actions de la station {content} sur la ligne {section}",
+    "removeDescription": "La station sera supprimée définitivement.",
+    "newPlaceholder": "Ajouter une station",
     "progress": "{done}/{total}",
-    "progressLabel": "{done} sur {total} cochés dans {section}"
+    "progressLabel": "{done, plural, =0 {Aucune station parcourue} one {# station parcourue} other {# stations parcourues}} sur {total}, ligne {section}",
+    "empty": "0 station",
+    "emptyLabel": "Aucune station sur la ligne {section}"
   }
 }

@@ -17,7 +17,7 @@ OWN-WORLD: Signage white ground in light, night-map blue-black in dark. Each sec
 
 STORY: The owner sees every line and how far each has travelled, ticks a station and watches its leg fill, adds a station at the end of a line, renames or removes from the station's menu.
 
-FIRST VIEWPORT: Header: line-12 roundel with a check, "Correspondance", then logout and theme on the right. Below, lines laid out as a map: one column on phones, two from 1024px. Each line: badge and name on one row with its travelled count, then the vertical track with its stations, item text beside each, the ⋯ menu revealed on hover or focus, "Ajouter un élément" as the track's open end. No cards. New line at the end as an open, dashed track.
+FIRST VIEWPORT: Header: line-12 roundel with a check, "Correspondance", then logout and theme on the right. Below, lines laid out as a map: one column on phones, two from 1024px. Each line: badge and name on one row with its travelled count, then the vertical track with its stations, item text beside each, the ⋯ menu revealed on hover or focus, "Ajouter une station" as the track's open end. No cards. New line at the end as an open, dashed track.
 
 FORM: Plan de métro, position 1 of my grounded list (the pick, chosen by the owner over the rolled timetable board). seed:8e1c8fbe39d634bb. Signature move: the travelled leg; checking fills the station and draws its leg in the line colour (one 200ms ease-out, none under reduced motion).
 
