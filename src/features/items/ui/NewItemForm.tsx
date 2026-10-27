@@ -37,7 +37,7 @@ export const NewItemForm = ({ section, color, arriving }: NewItemFormProps) => {
     );
 
   return (
-    <ItemForm form={form} onSubmit={add}>
+    <ItemForm form={form} onSubmit={add} emptySubmit="ignore">
       <Row rail={{ color, in: arriving, out: "none" }}>
         <NextStation label={t("items.addButton", { section: section.title })} disabled={create.isPending} />
         <ItemForm.TextField

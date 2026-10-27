@@ -16,11 +16,21 @@ type Profile = typeof ProfileSchema.Type;
 
 const ProfileForm = createForm(ProfileSchema);
 
-const Profile = ({ name, onSubmit }: { name: string; onSubmit: (values: Profile) => void }) => {
+type EmptySubmit = "validate" | "ignore";
+
+const Profile = ({
+  name,
+  onSubmit,
+  emptySubmit,
+}: {
+  name: string;
+  onSubmit: (values: Profile) => void;
+  emptySubmit: EmptySubmit;
+}) => {
   const form = ProfileForm.useForm({ defaultValues: { name, nickname: "" } });
 
   return (
-    <ProfileForm form={form} onSubmit={onSubmit}>
+    <ProfileForm form={form} onSubmit={onSubmit} emptySubmit={emptySubmit}>
       <ProfileForm.TextField name="name" label="Name" />
       <ProfileForm.TextField name="nickname" label="Nickname" />
       <button type="submit">Save</button>
@@ -28,9 +38,9 @@ const Profile = ({ name, onSubmit }: { name: string; onSubmit: (values: Profile)
   );
 };
 
-const renderProfile = (name = "") => {
+const renderProfile = (name = "", emptySubmit: EmptySubmit = "validate") => {
   const onSubmit = vi.fn<(values: Profile) => void>();
-  renderWithIntl(<Profile name={name} onSubmit={onSubmit} />);
+  renderWithIntl(<Profile name={name} onSubmit={onSubmit} emptySubmit={emptySubmit} />);
   return onSubmit;
 };
 
@@ -63,6 +73,17 @@ describe("createForm", () => {
     const name = screen.getByRole("textbox", { name: "Name" });
     expect(name).toHaveFocus();
     expect(name).toHaveAccessibleDescription("Ce champ est obligatoire.");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("lets an empty submit pass in silence when the form ignores it", async () => {
+    const onSubmit = renderProfile("", "ignore");
+
+    await save();
+
+    const name = screen.getByRole("textbox", { name: "Name" });
+    expect(name).toHaveFocus();
+    expect(name).not.toHaveAccessibleDescription();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 

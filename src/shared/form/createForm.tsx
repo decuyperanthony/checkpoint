@@ -43,17 +43,34 @@ export const createForm = <F extends FormFields>(schema: Schema.Struct<F>) => {
   type FormProps = {
     form: UseFormReturn<Input, unknown, Output>;
     onSubmit: (values: Output) => void;
+    // A form that adds something: "ignore" lets an empty submit pass in silence, with no error.
+    emptySubmit?: "validate" | "ignore";
     children: ReactNode;
   };
 
-  const Form = ({ form, onSubmit, children }: FormProps) => (
-    <FormProvider {...form}>
-      {/* `onSubmit` gets the decoded values alone, never React Hook Form's event. */}
-      <form noValidate onSubmit={form.handleSubmit((values) => onSubmit(values))}>
-        {children}
-      </form>
-    </FormProvider>
-  );
+  const Form = ({ form, onSubmit, emptySubmit = "validate", children }: FormProps) => {
+    const submit = form.handleSubmit((values) => onSubmit(values));
+    const isEmpty = () => Object.values(form.getValues()).every((value) => value === "");
+
+    return (
+      <FormProvider {...form}>
+        {/* `onSubmit` gets the decoded values alone, never React Hook Form's event. */}
+        <form
+          noValidate
+          onSubmit={(event) => {
+            if (emptySubmit === "ignore" && isEmpty()) {
+              event.preventDefault();
+              event.currentTarget.querySelector("input")?.focus();
+              return;
+            }
+            void submit(event);
+          }}
+        >
+          {children}
+        </form>
+      </FormProvider>
+    );
+  };
 
   type TextFieldProps = Omit<ComponentProps<typeof PlainTextField>, BoundProps> & {
     // Only the fields holding a string.

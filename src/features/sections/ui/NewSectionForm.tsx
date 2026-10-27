@@ -24,7 +24,7 @@ export const NewSectionForm = () => {
     });
 
   return (
-    <SectionForm form={form} onSubmit={add}>
+    <SectionForm form={form} onSubmit={add} emptySubmit="ignore">
       <OpenLine label={t("sections.addButton")} disabled={create.isPending}>
         <SectionForm.TextField
           name="title"
