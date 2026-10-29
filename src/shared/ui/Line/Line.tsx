@@ -2,6 +2,7 @@ import { cva } from "class-variance-authority";
 import { PlusIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { Accordion } from "@/shared/ui/Accordion";
 import type { LineColor, TokenClasses } from "@/shared/ui/tokens";
 
 const badge = cva("-ml-1 grid size-7 shrink-0 place-items-center rounded-full text-sm font-bold tabular-nums", {
@@ -39,24 +40,47 @@ type LineProps = {
   aside?: ReactNode;
   // Its menu: shown on hover or keyboard focus, and always on touch screens.
   actions?: ReactNode;
+  // Names the button that folds the stations away: "Stations de la ligne Courses".
+  toggleLabel: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   // Its stations.
   children: ReactNode;
 };
 
-// A section drawn as a metro line: its badge and name, then its stations along the track.
-export const Line = ({ color, number, header, aside, actions, children }: LineProps) => (
+// A section drawn as a metro line: its badge and name, then its stations along the track. Folded,
+// only the badge, the name and its progress remain.
+export const Line = ({
+  color,
+  number,
+  header,
+  aside,
+  actions,
+  toggleLabel,
+  open,
+  onOpenChange,
+  children,
+}: LineProps) => (
   <section className="flex flex-col">
-    <div className="group/line flex min-h-11 items-center gap-3">
-      <LineBadge color={color}>{number}</LineBadge>
-      <div className="min-w-0 flex-1">{header}</div>
-      {aside}
-      {actions === undefined ? null : (
-        <div className="opacity-0 transition-opacity group-hover/line:opacity-100 focus-within:opacity-100 has-data-[state=open]:opacity-100 pointer-coarse:opacity-100">
-          {actions}
+    <Accordion
+      toggleLabel={toggleLabel}
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <div className="group/line flex min-h-11 items-center gap-3">
+          <LineBadge color={color}>{number}</LineBadge>
+          <div className="min-w-0 flex-1">{header}</div>
+          {aside}
+          {actions === undefined ? null : (
+            <div className="opacity-0 transition-opacity group-hover/line:opacity-100 focus-within:opacity-100 has-data-[state=open]:opacity-100 pointer-coarse:opacity-100">
+              {actions}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-    {children}
+      }
+    >
+      {children}
+    </Accordion>
   </section>
 );
 
