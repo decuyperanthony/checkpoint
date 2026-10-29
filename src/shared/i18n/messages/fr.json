@@ -48,6 +48,7 @@
     "newTitle": "Nouvelle ligne",
     "title": "Nom de la ligne {title}",
     "menu": "Actions de la ligne {title}",
+    "stations": "Stations de la ligne {title}",
     "removeDescription": "La ligne et toutes ses stations seront supprimées définitivement.",
     "newPlaceholder": "Nouvelle ligne",
     "emptyHint": "Trace ta première ligne juste en dessous.",

@@ -14,6 +14,7 @@ vi.stubGlobal("fetch", fetchSpy);
 // Reset before each test, not after: a refetch still in flight from the previous screen
 // must not hit a disposed store.
 beforeEach(() => {
+  localStorage.clear();
   fakeApi.reset();
   fetchSpy.mockImplementation(fakeApi.fetch);
 });
@@ -122,6 +123,38 @@ describe("Board sections", () => {
     await userEvent.click(screen.getByRole("button", { name: "Supprimer" }));
 
     expect(await screen.findByText("Aucune ligne pour l'instant.")).toBeInTheDocument();
+  });
+});
+
+const stations = (section: string) => `Stations de la ligne ${section}`;
+
+describe("Board folding", () => {
+  it("folds a line's stations away and keeps its name and progress", async () => {
+    renderScreen(<Board />);
+    await addSection("Backlog");
+    await addItem("Backlog", "Idée");
+
+    await userEvent.click(screen.getByRole("button", { name: stations("Backlog") }));
+
+    expect(screen.queryByRole("checkbox", { name: "Idée" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Backlog" })).toBeInTheDocument();
+    expect(screen.getByText("0/1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: stations("Backlog") })).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("remembers which lines are folded after a reload, and only those", async () => {
+    const first = renderScreen(<Board />);
+    await addSection("Backlog");
+    await addItem("Backlog", "Idée");
+    await addSection("Courses");
+    await addItem("Courses", "Lait");
+    await userEvent.click(screen.getByRole("button", { name: stations("Backlog") }));
+    first.unmount();
+
+    renderScreen(<Board />);
+
+    expect(await screen.findByRole("checkbox", { name: "Lait" })).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: "Idée" })).not.toBeInTheDocument();
   });
 });
 

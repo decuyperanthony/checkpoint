@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 
 import type { Section } from "@/contract/schemas/Section";
 import { useRemoveSection } from "@/features/sections/api/sections";
+import { useCollapsedSections } from "@/features/sections/model/collapsedSections";
 import { RenameSectionForm } from "@/features/sections/ui/RenameSectionForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { ActionsMenu } from "@/shared/ui/ActionsMenu";
@@ -31,6 +32,7 @@ export const SectionLine = ({ section, color, number, aside, children }: Section
   const { editing, triggerRef, open, close } = useInlineEdit();
   const [removing, setRemoving] = useState(false);
   const remove = useRemoveSection();
+  const { isOpen, toggle } = useCollapsedSections();
 
   return (
     <Line
@@ -40,6 +42,9 @@ export const SectionLine = ({ section, color, number, aside, children }: Section
         editing ? <RenameSectionForm section={section} onClose={close} /> : <Title size="md">{section.title}</Title>
       }
       aside={editing ? null : aside}
+      toggleLabel={t("sections.stations", { title: section.title })}
+      open={isOpen(section.id)}
+      onOpenChange={() => toggle(section.id)}
       actions={
         editing ? undefined : (
           <ActionsMenu label={t("sections.menu", { title: section.title })} triggerRef={triggerRef}>
