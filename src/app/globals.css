@@ -5,6 +5,34 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* A folded thing opens and closes by its height, clipped only while it moves: at rest, what hangs
+     outside the box (hover backgrounds, focus rings) stays visible. Radix measures the height. */
+  --animate-unfold: unfold 200ms ease-out;
+  --animate-fold: fold 200ms ease-out;
+  @keyframes unfold {
+    from {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+      overflow: hidden;
+    }
+  }
+  @keyframes fold {
+    from {
+      height: var(--radix-collapsible-content-height);
+      opacity: 1;
+      overflow: hidden;
+    }
+    to {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+  }
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-success: var(--success);
