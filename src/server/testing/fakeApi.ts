@@ -3,12 +3,15 @@ import { HttpRouter } from "effect/http";
 
 import { ApiHandlers } from "@/server/http";
 import { RepositoriesMemory } from "@/server/repositories/RepositoriesMemory";
-import { PinVerifierTest, testPin } from "@/server/testing/fixtures";
+import { ApiTokenVerifierTest, PinVerifierTest, testPin } from "@/server/testing/fixtures";
 
 const build = () =>
-  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide([RepositoriesMemory, PinVerifierTest])), {
-    disableLogger: true,
-  });
+  HttpRouter.toWebHandler(
+    ApiHandlers.pipe(Layer.provide([RepositoriesMemory, PinVerifierTest, ApiTokenVerifierTest])),
+    {
+      disableLogger: true,
+    },
+  );
 
 // The real API on an in-memory store, callable as `fetch`: screen tests exercise the same
 // handlers, validation and errors as production, without a database or a hand-written mock.

@@ -2,12 +2,13 @@ import { Layer } from "effect";
 import { HttpRouter } from "effect/http";
 
 import { ApiHandlers } from "@/server/http";
-import { AppConfig, AuthConfig } from "@/server/infra/Config";
+import { ApiTokenConfig, AppConfig, AuthConfig } from "@/server/infra/Config";
 import { Db } from "@/server/infra/Db";
 import { ItemRepositoryDrizzle } from "@/server/repositories/ItemRepositoryDrizzle";
 import { LoginAttemptRepositoryDrizzle } from "@/server/repositories/LoginAttemptRepositoryDrizzle";
 import { SectionRepositoryDrizzle } from "@/server/repositories/SectionRepositoryDrizzle";
 import { SessionRepositoryDrizzle } from "@/server/repositories/SessionRepositoryDrizzle";
+import { ApiTokenVerifierSha256 } from "@/server/security/ApiTokenVerifierSha256";
 import { PinVerifierArgon2 } from "@/server/security/PinVerifierArgon2";
 
 const RepositoriesDrizzle = Layer.mergeAll(
@@ -17,7 +18,11 @@ const RepositoriesDrizzle = Layer.mergeAll(
   LoginAttemptRepositoryDrizzle,
 ).pipe(Layer.provide(Db.layer), Layer.provide(AppConfig.layer));
 
-const Production = Layer.merge(RepositoriesDrizzle, PinVerifierArgon2.pipe(Layer.provide(AuthConfig.layer)));
+const Production = Layer.mergeAll(
+  RepositoriesDrizzle,
+  PinVerifierArgon2.pipe(Layer.provide(AuthConfig.layer)),
+  ApiTokenVerifierSha256.pipe(Layer.provide(ApiTokenConfig.layer)),
+);
 
 // Built once per server instance. If a Layer fails to build (missing variable, for instance),
 // every request fails with that error and it is logged with its explicit message.

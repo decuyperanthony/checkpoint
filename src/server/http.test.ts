@@ -1,9 +1,11 @@
-import { Effect, Layer, Schema } from "effect";
+import { Effect, Layer, Option, type Redacted, Schema } from "effect";
 import { HttpRouter } from "effect/http";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { Item } from "@/contract/schemas/Item";
 import { Section } from "@/contract/schemas/Section";
+import { ApiTokenConfig } from "@/server/infra/Config";
+import { ApiTokenVerifierSha256 } from "@/server/security/ApiTokenVerifierSha256";
 import { ApiHandlers } from "@/server/http";
 import type { ItemRepository } from "@/server/repositories/ItemRepository";
 import { ItemRepositoryMemory } from "@/server/repositories/ItemRepositoryMemory";
@@ -15,12 +17,14 @@ import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { SectionRepositoryMemory } from "@/server/repositories/SectionRepositoryMemory";
 import type { SessionRepository } from "@/server/repositories/SessionRepository";
 import { SessionRepositoryMemory } from "@/server/repositories/SessionRepositoryMemory";
-import { PinVerifierTest, testPin, unknownUuid } from "@/server/testing/fixtures";
+import { ApiTokenVerifierTest, PinVerifierTest, testApiToken, testPin, unknownUuid } from "@/server/testing/fixtures";
 
 type Repositories = SectionRepository | ItemRepository | SessionRepository | LoginAttemptRepository;
 
 const makeApp = (repositories: Layer.Layer<Repositories>) =>
-  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide([repositories, PinVerifierTest])), { disableLogger: true });
+  HttpRouter.toWebHandler(ApiHandlers.pipe(Layer.provide([repositories, PinVerifierTest, ApiTokenVerifierTest])), {
+    disableLogger: true,
+  });
 
 let app = makeApp(RepositoriesMemory);
 
@@ -250,5 +254,52 @@ describe("auth API", () => {
     expect(response.status).toBe(204);
     expect(response.headers.get("set-cookie")).toMatch(/^__Host-checkpoint_session=;.*Max-Age=0/);
     expect((await send("GET", "/sections")).status).toBe(401);
+  });
+});
+
+const withToken = (token: string) => ({ authorization: `Bearer ${token}` });
+
+describe("bearer token", () => {
+  it("opens the API without a session", async () => {
+    const created = await request("POST", "/sections", {
+      body: { title: "Courses" },
+      headers: withToken(testApiToken),
+    });
+    const listed = await request("GET", "/sections", { headers: withToken(testApiToken) });
+
+    expect(created.status).toBe(201);
+    expect(await readJson(listed, Schema.Array(Section))).toMatchObject([{ title: "Courses" }]);
+  });
+
+  it("answers 401 for a token that is not the right one, as for no credential", async () => {
+    const wrong = await request("GET", "/sections", { headers: withToken("cp_not-the-token") });
+    const none = await request("GET", "/sections");
+
+    expect(wrong.status).toBe(401);
+    expect(await wrong.text()).toBe(await none.text());
+  });
+
+  it("still opens with the session when the token is wrong", async () => {
+    const response = await request("GET", "/sections", { headers: { cookie: session, ...withToken("cp_wrong") } });
+
+    expect(response.status).toBe(200);
+  });
+
+  it("is refused everywhere when no token is configured", async () => {
+    await app.dispose();
+    app = HttpRouter.toWebHandler(
+      ApiHandlers.pipe(
+        Layer.provide([
+          RepositoriesMemory,
+          PinVerifierTest,
+          ApiTokenVerifierSha256.pipe(
+            Layer.provide(Layer.succeed(ApiTokenConfig, { tokenHash: Option.none<Redacted.Redacted>() })),
+          ),
+        ]),
+      ),
+      { disableLogger: true },
+    );
+
+    expect((await request("GET", "/sections", { headers: withToken(testApiToken) })).status).toBe(401);
   });
 });

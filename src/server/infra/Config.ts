@@ -61,3 +61,25 @@ export class AuthConfig extends Context.Service<AuthConfig>()("checkpoint/AuthCo
 }) {
   static readonly layer = Layer.effect(this, this.make);
 }
+
+// A SHA-256 digest in hex, as printed by `pnpm hash-api-token`: never the token itself.
+const Sha256Hex = Schema.String.check(Schema.isPattern(/^[0-9a-f]{64}$/));
+
+// Optional: without `API_TOKEN_HASH` the API takes no token and the PIN is the only way in.
+export class ApiTokenConfig extends Context.Service<ApiTokenConfig>()("checkpoint/ApiTokenConfig", {
+  make: Effect.gen(function* () {
+    const present = yield* Config.option(Config.String("API_TOKEN_HASH")).pipe(
+      Config.map(Option.filter((value) => value.trim() !== "")),
+    );
+    if (Option.isNone(present)) return { tokenHash: Option.none<Redacted.Redacted>() };
+
+    const tokenHash = yield* environmentVariable({
+      name: "API_TOKEN_HASH",
+      schema: Sha256Hex,
+      expected: "a SHA-256 hex digest, from `pnpm hash-api-token`",
+    });
+    return { tokenHash: Option.some(Redacted.make(tokenHash)) };
+  }),
+}) {
+  static readonly layer = Layer.effect(this, this.make);
+}
