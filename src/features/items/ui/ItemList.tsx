@@ -4,6 +4,7 @@ import type { Section } from "@/contract/schemas/Section";
 import { useItems } from "@/features/items/api/items";
 import { ItemRow } from "@/features/items/ui/ItemRow";
 import { NewItemForm } from "@/features/items/ui/NewItemForm";
+import { Reorder } from "@/shared/ui/Reorder";
 import type { Leg } from "@/shared/ui/Row";
 import type { LineColor } from "@/shared/ui/tokens";
 
@@ -22,7 +23,7 @@ export const ItemList = ({ section, color }: ItemListProps) => {
   const stations = items.filter((item) => item.sectionId === section.id);
 
   return (
-    <>
+    <Reorder.List kind="station" id={section.id} ids={stations.map((item) => item.id)}>
       {stations.map((item, index) => (
         <ItemRow
           key={item.id}
@@ -33,6 +34,6 @@ export const ItemList = ({ section, color }: ItemListProps) => {
         />
       ))}
       <NewItemForm section={section} color={color} arriving={legAfter(stations.at(-1))} />
-    </>
+    </Reorder.List>
   );
 };
