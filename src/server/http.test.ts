@@ -303,3 +303,15 @@ describe("bearer token", () => {
     expect((await request("GET", "/sections", { headers: withToken(testApiToken) })).status).toBe(401);
   });
 });
+
+describe("API reference", () => {
+  it("serves the OpenAPI reference without a session, with the endpoints and the bearer scheme", async () => {
+    const response = await request("GET", "/docs");
+    const page = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(page).toContain("/api/sections");
+    expect(page).toContain('"scheme":"Bearer"');
+  });
+});
