@@ -117,6 +117,44 @@ describe("sections API", () => {
   });
 });
 
+describe("moving over the API", () => {
+  it("moves a section and answers the sections in their new order", async () => {
+    await send("POST", "/sections", { title: "Courses" });
+    const second = await readJson(await send("POST", "/sections", { title: "Travail" }), Section);
+
+    const response = await send("PATCH", `/sections/${second.id}/position`, { position: 0 });
+
+    expect(response.status).toBe(200);
+    const sections = await readJson(response, Schema.Array(Section));
+    expect(sections.map((section) => section.title)).toEqual(["Travail", "Courses"]);
+  });
+
+  it("moves an item to another section", async () => {
+    const courses = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
+    const work = await readJson(await send("POST", "/sections", { title: "Travail" }), Section);
+    const milk = await readJson(await send("POST", `/sections/${courses.id}/items`, { content: "Lait" }), Item);
+
+    const response = await send("PATCH", `/items/${milk.id}/position`, { sectionId: work.id, position: 0 });
+
+    expect(response.status).toBe(200);
+    expect(await readJson(response, Schema.Array(Item))).toMatchObject([{ content: "Lait", sectionId: work.id }]);
+  });
+
+  it("rejects a position that is negative or not a whole number", async () => {
+    const section = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);
+
+    expect((await send("PATCH", `/sections/${section.id}/position`, { position: -1 })).status).toBe(400);
+    expect((await send("PATCH", `/sections/${section.id}/position`, { position: 1.5 })).status).toBe(400);
+  });
+
+  it("answers 404 for an unknown section or item", async () => {
+    expect((await send("PATCH", `/sections/${unknownUuid}/position`, { position: 0 })).status).toBe(404);
+    expect(
+      (await send("PATCH", `/items/${unknownUuid}/position`, { sectionId: unknownUuid, position: 0 })).status,
+    ).toBe(404);
+  });
+});
+
 describe("items API", () => {
   it("creates an item in a section, then checks it", async () => {
     const section = await readJson(await send("POST", "/sections", { title: "Courses" }), Section);

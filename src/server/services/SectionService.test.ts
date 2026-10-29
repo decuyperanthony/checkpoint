@@ -64,4 +64,28 @@ describe("SectionService", () => {
 
     expect(error).toBeInstanceOf(SectionNotFound);
   });
+
+  it("moves a section among the others and answers them in their new order", async () => {
+    const titles = await run(
+      Effect.gen(function* () {
+        const sections = yield* SectionService;
+        yield* sections.create("Courses");
+        yield* sections.create("Travail");
+        const last = yield* sections.create("Maison");
+        const moved = yield* sections.move({ id: last.id, position: 0 });
+        expect(moved.map((section) => section.position)).toEqual([0, 1, 2]);
+        return (yield* sections.list).map((section) => section.title);
+      }),
+    );
+
+    expect(titles).toEqual(["Maison", "Courses", "Travail"]);
+  });
+
+  it("fails with SectionNotFound when moving an unknown section", async () => {
+    const error = await run(
+      SectionService.use((sections) => Effect.flip(sections.move({ id: unknownId, position: 0 }))),
+    );
+
+    expect(error).toBeInstanceOf(SectionNotFound);
+  });
 });
