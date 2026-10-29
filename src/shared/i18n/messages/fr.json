@@ -48,6 +48,7 @@
     "newTitle": "Nouvelle ligne",
     "title": "Nom de la ligne {title}",
     "menu": "Actions de la ligne {title}",
+    "move": "Déplacer la ligne {title}",
     "removeDescription": "La ligne et toutes ses stations seront supprimées définitivement.",
     "newPlaceholder": "Nouvelle ligne",
     "emptyHint": "Trace ta première ligne juste en dessous.",
@@ -57,6 +58,7 @@
     "newContent": "Nouvelle station sur la ligne {section}",
     "content": "Nom de la station {content} sur la ligne {section}",
     "menu": "Actions de la station {content} sur la ligne {section}",
+    "move": "Déplacer la station {content} sur la ligne {section}",
     "removeDescription": "La station sera supprimée définitivement.",
     "newPlaceholder": "Ajouter une station",
     "progress": "{done}/{total}",
@@ -64,5 +66,12 @@
     "empty": "0 station",
     "emptyLabel": "Aucune station sur la ligne {section}",
     "addButton": "Ajouter la station à la ligne {section}"
+  },
+  "reorder": {
+    "instructions": "Pour déplacer, appuie sur Espace, choisis la place avec les flèches, puis appuie sur Espace pour déposer. Échap annule.",
+    "pickedUp": "{label} saisi.",
+    "over": "{label} est au-dessus de {over}.",
+    "dropped": "{label} déposé.",
+    "cancelled": "Déplacement de {label} annulé."
   }
 }
