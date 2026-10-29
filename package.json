@@ -14,6 +14,7 @@
     "test": "vitest run",
     "db:generate": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs generate",
     "hash-pin": "node scripts/hash-pin.ts",
+    "hash-api-token": "node scripts/hash-api-token.ts",
     "db:migrate": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs migrate"
   },
   "dependencies": {

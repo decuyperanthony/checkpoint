@@ -48,23 +48,37 @@ pnpm dev
 
 Environment, in `.env.local` (never committed) and on Vercel:
 
-| Variable       | Value                                                |
-| -------------- | ---------------------------------------------------- |
-| `DATABASE_URL` | Neon pooled connection string                        |
-| `PIN_HASH`     | argon2id hash of the PIN, printed by `pnpm hash-pin` |
+| Variable         | Value                                                                      |
+| ---------------- | -------------------------------------------------------------------------- |
+| `DATABASE_URL`   | Neon pooled connection string                                              |
+| `PIN_HASH`       | argon2id hash of the PIN, printed by `pnpm hash-pin`                       |
+| `API_TOKEN_HASH` | Optional. SHA-256 digest of an API token, printed by `pnpm hash-api-token` |
+
+## API for scripts and agents
+
+Everything the app does is an HTTP API under `/api`. A script or an AI agent (Claude, for instance) uses it with a bearer token instead of the PIN:
+
+```sh
+curl https://<your-app>/api/sections -H "Authorization: Bearer $CHECKPOINT_TOKEN"
+```
+
+- **How to talk to it, endpoint by endpoint: [docs/api.md](docs/api.md)**. Written to be read by an agent: base URL, authentication, every endpoint with its payload, and what the errors mean.
+- **Live reference** (OpenAPI, shown with Scalar): `/api/docs` on the running app. It describes the endpoints and holds no data.
+- **Set it up**: `pnpm hash-api-token` makes the token and its digest; the digest goes in `API_TOKEN_HASH`. Without that variable the API takes no token.
 
 ## Scripts
 
-| Script              | Purpose                   |
-| ------------------- | ------------------------- |
-| `pnpm dev`          | Start the dev server      |
-| `pnpm build`        | Production build          |
-| `pnpm typecheck`    | TypeScript                |
-| `pnpm lint`         | oxlint                    |
-| `pnpm format`       | Format with oxfmt         |
-| `pnpm format:check` | Check formatting          |
-| `pnpm test`         | Vitest                    |
-| `pnpm hash-pin`     | Hash a PIN for `PIN_HASH` |
+| Script                | Purpose                                    |
+| --------------------- | ------------------------------------------ |
+| `pnpm dev`            | Start the dev server                       |
+| `pnpm build`          | Production build                           |
+| `pnpm typecheck`      | TypeScript                                 |
+| `pnpm lint`           | oxlint                                     |
+| `pnpm format`         | Format with oxfmt                          |
+| `pnpm format:check`   | Check formatting                           |
+| `pnpm test`           | Vitest                                     |
+| `pnpm hash-pin`       | Hash a PIN for `PIN_HASH`                  |
+| `pnpm hash-api-token` | Make an API token and its `API_TOKEN_HASH` |
 
 ## License
 
