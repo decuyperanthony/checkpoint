@@ -10,9 +10,14 @@ import { RenameSectionForm } from "@/features/sections/ui/RenameSectionForm";
 import { useInlineEdit } from "@/shared/lib/useInlineEdit";
 import { ActionsMenu } from "@/shared/ui/ActionsMenu";
 import { Line } from "@/shared/ui/Line";
+import { Reorder } from "@/shared/ui/Reorder";
 import { RemoveDialog } from "@/shared/ui/RemoveDialog";
+import { Stack } from "@/shared/ui/Stack";
 import { Title } from "@/shared/ui/Title";
 import type { LineColor } from "@/shared/ui/tokens";
+
+// The one list the lines belong to.
+export const linesId = "lines";
 
 type SectionLineProps = {
   section: Section;
@@ -33,36 +38,41 @@ export const SectionLine = ({ section, color, number, aside, children }: Section
   const remove = useRemoveSection();
 
   return (
-    <Line
-      color={color}
-      number={number}
-      header={
-        editing ? <RenameSectionForm section={section} onClose={close} /> : <Title size="md">{section.title}</Title>
-      }
-      aside={editing ? null : aside}
-      actions={
-        editing ? undefined : (
-          <ActionsMenu label={t("sections.menu", { title: section.title })} triggerRef={triggerRef}>
-            <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
-              {t("actions.rename")}
-            </ActionsMenu.Item>
-            <ActionsMenu.Separator />
-            <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
-              {t("actions.remove")}
-            </ActionsMenu.Item>
-          </ActionsMenu>
-        )
-      }
-    >
-      {children}
-      <RemoveDialog
-        name={section.title}
-        description={t("sections.removeDescription")}
-        open={removing}
-        onOpenChange={setRemoving}
-        returnFocusTo={triggerRef}
-        onConfirm={() => remove.mutate(section.id)}
-      />
-    </Line>
+    <Reorder.Item kind="line" id={section.id} containerId={linesId} label={section.title}>
+      <Line
+        color={color}
+        number={number}
+        header={
+          editing ? <RenameSectionForm section={section} onClose={close} /> : <Title size="md">{section.title}</Title>
+        }
+        aside={editing ? null : aside}
+        actions={
+          editing ? undefined : (
+            <Stack direction="row" gap="sm">
+              <Reorder.Handle label={t("sections.move", { title: section.title })} />
+              <ActionsMenu label={t("sections.menu", { title: section.title })} triggerRef={triggerRef}>
+                <ActionsMenu.Item icon={PencilIcon} onSelect={open}>
+                  {t("actions.rename")}
+                </ActionsMenu.Item>
+                <ActionsMenu.Separator />
+                <ActionsMenu.Item icon={Trash2Icon} tone="destructive" onSelect={() => setRemoving(true)}>
+                  {t("actions.remove")}
+                </ActionsMenu.Item>
+              </ActionsMenu>
+            </Stack>
+          )
+        }
+      >
+        {children}
+        <RemoveDialog
+          name={section.title}
+          description={t("sections.removeDescription")}
+          open={removing}
+          onOpenChange={setRemoving}
+          returnFocusTo={triggerRef}
+          onConfirm={() => remove.mutate(section.id)}
+        />
+      </Line>
+    </Reorder.Item>
   );
 };

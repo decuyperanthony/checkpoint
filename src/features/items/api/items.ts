@@ -2,6 +2,7 @@ import { useMutation, usePrefetchQuery, useQueryClient, useSuspenseQuery } from 
 
 import type { Item, UpdateItemPayload } from "@/contract/schemas/Item";
 import type { SectionId } from "@/contract/schemas/Section";
+import { movedItems } from "@/features/items/model/moveItem";
 import { callApi } from "@/shared/lib/api";
 import { queryKeys } from "@/shared/lib/queryKeys";
 import { useInvalidate } from "@/shared/lib/useInvalidate";
@@ -64,5 +65,26 @@ export const useRemoveItem = () => {
   return useMutation({
     mutationFn: (id: Item["id"]) => callApi((api) => api.items.remove({ params: { id } })),
     onSuccess: invalidate,
+  });
+};
+
+// Shows the move at once, in the shared list, before the API answers: the item may change line.
+// A failure puts the list back and the error toast says why; either way it is refetched.
+export const useMoveItem = () => {
+  const queryClient = useQueryClient();
+  const invalidate = useInvalidate(queryKeys.items);
+  return useMutation({
+    mutationFn: ({ id, sectionId, position }: Pick<Item, "id" | "sectionId" | "position">) =>
+      callApi((api) => api.items.move({ params: { id }, payload: { sectionId, position } })),
+    onMutate: async (move) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.items });
+      const previous = queryClient.getQueryData<ReadonlyArray<Item>>(queryKeys.items);
+      queryClient.setQueryData<ReadonlyArray<Item>>(queryKeys.items, (items) =>
+        items === undefined ? items : movedItems(items, move),
+      );
+      return { previous };
+    },
+    onError: (_error, _variables, context) => queryClient.setQueryData(queryKeys.items, context?.previous),
+    onSettled: invalidate,
   });
 };

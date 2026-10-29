@@ -125,6 +125,17 @@ describe("Board sections", () => {
   });
 });
 
+describe("Board reordering", () => {
+  it("gives every line and every station a grip named after it", async () => {
+    renderScreen(<Board />);
+    await addSection("Courses");
+    await addItem("Courses", "Lait");
+
+    expect(screen.getByRole("button", { name: "Déplacer la ligne Courses" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Déplacer la station Lait sur la ligne Courses" })).toBeInTheDocument();
+  });
+});
+
 describe("Board items", () => {
   it("adds a station by tapping the dashed station, not only with Enter", async () => {
     renderScreen(<Board />);
