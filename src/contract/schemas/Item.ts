@@ -1,5 +1,6 @@
 import { Schema } from "effect";
 
+import { Position } from "@/contract/schemas/Position";
 import { SectionId } from "@/contract/schemas/Section";
 
 export const ItemId = Schema.String.check(Schema.isUUID()).pipe(Schema.brand("ItemId"));
@@ -28,3 +29,8 @@ export const UpdateItemPayload = Schema.Union([
   Schema.Struct({ content: Schema.optionalKey(ItemContent), done: Schema.Boolean }),
 ]);
 export type UpdateItemPayload = typeof UpdateItemPayload.Type;
+
+// Moving an item says its section, which may be another one, and where it goes among that
+// section's items.
+export const MoveItemPayload = Schema.Struct({ sectionId: SectionId, position: Position });
+export type MoveItemPayload = typeof MoveItemPayload.Type;

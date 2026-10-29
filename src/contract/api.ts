@@ -7,8 +7,8 @@ import { ItemNotFound } from "@/contract/errors/ItemNotFound";
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
 import { TooManyAttempts } from "@/contract/errors/TooManyAttempts";
 import { LoginPayload } from "@/contract/schemas/Auth";
-import { CreateItemPayload, Item, ItemId, UpdateItemPayload } from "@/contract/schemas/Item";
-import { Section, SectionId, SectionTitlePayload } from "@/contract/schemas/Section";
+import { CreateItemPayload, Item, ItemId, MoveItemPayload, UpdateItemPayload } from "@/contract/schemas/Item";
+import { MoveSectionPayload, Section, SectionId, SectionTitlePayload } from "@/contract/schemas/Section";
 
 const sectionParams = { id: SectionId };
 
@@ -29,6 +29,15 @@ export const SectionsGroup = HttpApiGroup.make("sections")
     }),
   )
   .add(HttpApiEndpoint.delete("remove", "/:id", { params: sectionParams, error: SectionNotFound }))
+  // Answers the sections in their new order.
+  .add(
+    HttpApiEndpoint.patch("move", "/:id/position", {
+      params: sectionParams,
+      payload: MoveSectionPayload,
+      success: Schema.Array(Section),
+      error: SectionNotFound,
+    }),
+  )
   // Last: `prefix` and `middleware` only apply to the endpoints added before them.
   .prefix("/sections")
   .middleware(Authorization);
@@ -46,6 +55,15 @@ export const ItemsGroup = HttpApiGroup.make("items")
     }),
   )
   .add(HttpApiEndpoint.delete("remove", "/:id", { params: itemParams, error: ItemNotFound }))
+  // Answers every item in its new order.
+  .add(
+    HttpApiEndpoint.patch("move", "/:id/position", {
+      params: itemParams,
+      payload: MoveItemPayload,
+      success: Schema.Array(Item),
+      error: [ItemNotFound, SectionNotFound],
+    }),
+  )
   // `prefix` only applies to the endpoints added before it: creation lives under its section.
   .prefix("/items")
   .add(

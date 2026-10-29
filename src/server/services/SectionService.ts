@@ -1,6 +1,7 @@
 import { Context, Effect, Layer } from "effect";
 
 import { SectionNotFound } from "@/contract/errors/SectionNotFound";
+import { placeAt } from "@/contract/ordering";
 import type { Section, SectionId } from "@/contract/schemas/Section";
 import { SectionRepository } from "@/server/repositories/SectionRepository";
 import { nextPosition } from "@/server/services/positions";
@@ -24,6 +25,14 @@ export class SectionService extends Context.Service<SectionService>()("checkpoin
 
       rename: Effect.fn("SectionService.rename")(function* ({ id, title }: Pick<Section, "id" | "title">) {
         return yield* repository.update({ id, changes: { title } }).pipe(Effect.flatMap(notFound(id)));
+      }),
+
+      // Answers the sections in their new order. `position` past the end means last.
+      move: Effect.fn("SectionService.move")(function* ({ id, position }: Pick<Section, "id" | "position">) {
+        const before = (yield* repository.list).map((section) => section.id);
+        if (!before.includes(id)) return yield* new SectionNotFound({ id });
+        yield* repository.arrange(placeAt({ list: before, item: id, index: position }));
+        return yield* repository.list;
       }),
 
       remove: Effect.fn("SectionService.remove")(function* (id: SectionId) {

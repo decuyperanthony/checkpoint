@@ -14,6 +14,7 @@ export const SectionsHandlers = HttpApiBuilder.group(
       .handle("list", () => sections.list)
       .handle("create", ({ payload }) => sections.create(payload.title))
       .handle("rename", ({ params, payload }) => sections.rename({ id: params.id, title: payload.title }))
+      .handle("move", ({ params, payload }) => sections.move({ id: params.id, position: payload.position }))
       .handle("remove", ({ params }) => sections.remove(params.id));
   }),
 );

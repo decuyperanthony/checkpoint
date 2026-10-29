@@ -41,6 +41,14 @@ export const ItemRepositoryDrizzle = Layer.effect(
         query((db) => db.update(item).set(changes).where(eq(item.id, id)).returning(columns)).pipe(
           Effect.flatMap(updatedRow(Item)),
         ),
+      arrange: ({ sectionId, ids }) =>
+        query((db) =>
+          db.transaction(async (tx) => {
+            for (const [position, id] of ids.entries()) {
+              await tx.update(item).set({ sectionId, position }).where(eq(item.id, id));
+            }
+          }),
+        ),
       delete: (id) =>
         query((db) => db.delete(item).where(eq(item.id, id)).returning({ id: item.id })).pipe(
           Effect.flatMap(deletedId(ItemId)),

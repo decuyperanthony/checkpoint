@@ -28,6 +28,13 @@ export const SectionRepositoryMemory = Layer.effect(
           const [renamed, rows] = updateById(tables.sections, id, (section) => ({ ...section, ...changes }));
           return [renamed, { ...tables, sections: rows }];
         }),
+      arrange: (ids) =>
+        Ref.update(store, (tables) => ({
+          ...tables,
+          sections: tables.sections.map((section) =>
+            ids.includes(section.id) ? { ...section, position: ids.indexOf(section.id) } : section,
+          ),
+        })),
       delete: (id) =>
         Ref.modify(store, (tables) => {
           const [deleted, rows] = removeById(tables.sections, id);
