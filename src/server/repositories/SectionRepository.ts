@@ -14,6 +14,8 @@ export class SectionRepository extends Context.Service<
     readonly lastPosition: Effect.Effect<Option.Option<number>>;
     readonly insert: (draft: SectionDraft) => Effect.Effect<Section>;
     readonly update: (input: SectionUpdate) => Effect.Effect<Option.Option<Section>>;
+    // Numbers the sections after the order of `ids`, all or none.
+    readonly arrange: (ids: ReadonlyArray<SectionId>) => Effect.Effect<void>;
     readonly delete: (id: SectionId) => Effect.Effect<Option.Option<SectionId>>;
   }
 >()("checkpoint/SectionRepository") {}

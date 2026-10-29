@@ -97,4 +97,61 @@ describe("ItemService", () => {
 
     expect(errors).toEqual([expect.any(ItemNotFound), expect.any(ItemNotFound)]);
   });
+
+  it("moves an item within its section", async () => {
+    const contents = await run(
+      Effect.gen(function* () {
+        const { section, bread } = yield* groceries;
+        const items = yield* ItemService;
+        yield* items.move({ id: bread.id, sectionId: section.id, position: 0 });
+        return (yield* items.list).map((item) => item.content);
+      }),
+    );
+
+    expect(contents).toEqual(["Pain", "Lait"]);
+  });
+
+  it("moves an item to another section, at the given place", async () => {
+    const { items, workId } = await run(
+      Effect.gen(function* () {
+        const { milk } = yield* groceries;
+        const service = yield* ItemService;
+        const work = yield* (yield* SectionService).create("Travail");
+        yield* service.create({ sectionId: work.id, content: "Rapport" });
+        yield* service.move({ id: milk.id, sectionId: work.id, position: 0 });
+        return { items: yield* service.list, workId: work.id };
+      }),
+    );
+
+    const inWork = items.filter((item) => item.sectionId === workId);
+    expect(inWork.map((item) => [item.content, item.position])).toEqual([
+      ["Lait", 0],
+      ["Rapport", 1],
+    ]);
+    expect(items.filter((item) => item.sectionId !== workId).map((item) => item.content)).toEqual(["Pain"]);
+  });
+
+  it("fails with ItemNotFound for an unknown item", async () => {
+    const error = await run(
+      Effect.gen(function* () {
+        const { section } = yield* groceries;
+        const unknown = Schema.decodeSync(ItemId)(unknownUuid);
+        return yield* Effect.flip((yield* ItemService).move({ id: unknown, sectionId: section.id, position: 0 }));
+      }),
+    );
+
+    expect(error).toBeInstanceOf(ItemNotFound);
+  });
+
+  it("fails with SectionNotFound when moving an item to an unknown section", async () => {
+    const error = await run(
+      Effect.gen(function* () {
+        const { milk } = yield* groceries;
+        const unknown = Schema.decodeSync(SectionId)(unknownUuid);
+        return yield* Effect.flip((yield* ItemService).move({ id: milk.id, sectionId: unknown, position: 0 }));
+      }),
+    );
+
+    expect(error).toBeInstanceOf(SectionNotFound);
+  });
 });
